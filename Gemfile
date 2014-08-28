@@ -38,3 +38,11 @@ gem 'spring',        group: :development
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
+gem 'simple_form', :git => 'git://github.com/plataformatec/simple_form.git'
+gem 'haml-rails'
+
+group :test, :development do
+  gem "rspec-rails"
+  gem 'spork-rails'
+  gem "factory_girl_rails"
+end
