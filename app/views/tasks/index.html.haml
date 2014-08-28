@@ -1,6 +1,6 @@
 %h1 Listing tasks
 
-%table
+%table.table.table-striped.table-bordered
   %tr
     %th Fog bugz
     %th Title
@@ -11,22 +11,21 @@
     %th Board
     %th Comments
     %th
-    %th
-    %th
 
   - @tasks.each do |task|
     %tr
-      %td= task.fog_bugz_id
-      %td= task.title
-      %td= task.estimate
-      %td= task.lane
-      %td= task.status
-      %td= task.shepherd
-      %td= task.board
-      %td= task.comments
-      %td= link_to 'Show', task
-      %td= link_to 'Edit', edit_task_path(task)
-      %td= link_to 'Destroy', task, :method => :delete, :data => { :confirm => 'Are you sure?' }
+      %td.col-md-1= task.fog_bugz_id
+      %td.col-md-2= task.title
+      %td.col-md-1= task.estimate
+      %td.col-md-1= task.lane
+      %td.col-md-1= task.status
+      %td.col-md-1= task.shepherd
+      %td.col-md-1= task.board
+      %td.col-md-2= task.comments
+      %td.col-md-2
+        = link_to 'Show', task
+        = link_to 'Edit', edit_task_path(task)
+        = link_to 'Destroy', task, :method => :delete, :data => { :confirm => 'Are you sure?' }
 
 %br
 

@@ -1,15 +1,16 @@
 = simple_form_for(@task) do |f|
   = f.error_notification
 
-  .form-inputs
-    = f.input :fog_bugz_id
-    = f.input :title
-    = f.input :estimate
-    = f.input :lane
-    = f.input :status
-    = f.input :shepherd
-    = f.input :board
-    = f.input :comments
+  .form-group
+    .input-group
+      = f.input :fog_bugz_id
+      = f.input :title
+      = f.input :estimate
+      = f.input :lane
+      = f.input :status
+      = f.input :shepherd
+      = f.input :board
+      = f.input :comments
 
   .form-actions
-    = f.button :submit
+    = f.button :submit, class: 'btn btn-primary'
