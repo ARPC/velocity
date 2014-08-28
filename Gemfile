@@ -40,6 +40,8 @@ gem 'spring',        group: :development
 
 gem 'simple_form', :git => 'git://github.com/plataformatec/simple_form.git'
 gem 'haml-rails'
+gem 'bootstrap-sass'
+gem 'autoprefixer-rails'
 
 group :test, :development do
   gem "rspec-rails"
