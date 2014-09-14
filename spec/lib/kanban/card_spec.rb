@@ -2,9 +2,10 @@ require 'kanban/card'
 
 describe Kanban::Card do
   context '#method_missing' do
-    let(:card) { Kanban::Card.new({ 'Title' => 'Card Title', 'ExternalCardID' => 123, 'Size' => 13 }) }
+    let(:card) { Kanban::Card.new({ 'Id' => 11, 'Title' => 'Card Title', 'ExternalCardID' => 123, 'Size' => 13 }) }
 
     it 'maps fields' do
+      expect(card.id).to eq(11)
       expect(card.title).to eq('Card Title')
       expect(card.external_card_id).to eq(123)
       expect(card.size).to eq(13)
