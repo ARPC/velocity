@@ -8,11 +8,11 @@ describe Kanban::Api do
       @lkk_response = { 'Lanes' => [@wip_cards, @done_cards] }
     end
 
-
     it 'returns the cards' do
       expect(LeanKitKanban::Board).to receive(:find).with(46341228).and_return(@lkk_response)
-      @done_cards['Cards'].each {|card| expect(Kanban::Card).to receive(:new).with(card) }
-      Kanban::Api.done_cards
+      cards = Kanban::Api.done_cards
+      expect(cards.length).to eq(2)
+      cards.each {|card| expect(card).to be_a(Kanban::Card) }
     end
 
     it 'only returns the done cards' do
