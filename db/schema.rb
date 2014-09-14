@@ -11,7 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140828015108) do
+ActiveRecord::Schema.define(version: 20140914061508) do
+
+  create_table "task_metrics", force: true do |t|
+    t.integer  "leankit_id"
+    t.integer  "fog_bugz_id"
+    t.string   "title"
+    t.integer  "estimate"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "tasks", force: true do |t|
     t.integer  "fog_bugz_id"
