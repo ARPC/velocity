@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140914061508) do
+ActiveRecord::Schema.define(version: 20140916184304) do
 
   create_table "task_metrics", force: true do |t|
     t.integer  "leankit_id"
@@ -20,6 +20,7 @@ ActiveRecord::Schema.define(version: 20140914061508) do
     t.integer  "estimate"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "done_at"
   end
 
   create_table "tasks", force: true do |t|
