@@ -36,6 +36,13 @@ describe Kanban::Api do
       expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@done_lane, 0))
     end
 
+    it 'treats cards with 0 size as without size' do
+      @wip_lane['Cards'][0]['Size'] = 0
+      @done_lane['Cards'][0]['Size'] = 0
+      cards = Kanban::Api.cards_missing_size
+      expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@done_lane, 0))
+    end
+
     it 'ignores cards with sizes' do
       cards = Kanban::Api.cards_missing_size
       expect(cards.map {|card| card.id}).not_to contain_exactly(get_card_id(@wip_lane, 1), get_card_id(@done_lane, 1))
@@ -51,6 +58,13 @@ describe Kanban::Api do
     end
 
     it 'provides cards without tags' do
+      cards = Kanban::Api.cards_missing_tags
+      expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@done_lane, 0))
+    end
+
+    it 'treats cards with blank tags as without tags' do
+      @wip_lane['Cards'][0]['Tags'] = ''
+      @done_lane['Cards'][0]['Tags'] = ''
       cards = Kanban::Api.cards_missing_tags
       expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@done_lane, 0))
     end

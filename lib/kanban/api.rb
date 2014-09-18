@@ -11,23 +11,23 @@ module Kanban
     end
 
     def self.cards_missing_size
-      cards_missing_by('Size')
+      cards_missing_by('Size', [nil, 0])
     end
 
     def self.cards_missing_tags
-      cards_missing_by('Tags')
+      cards_missing_by('Tags', [nil, ''])
     end
 
     def self.get_board
       LeanKitKanban::Board.find(46341228).first
     end
 
-    def self.cards_missing_by(field)
+    def self.cards_missing_by(field, values_considered_missing)
       cards = []
       board = get_board
       board['Lanes'].each do |lane|
         lane['Cards'].each do |card|
-          cards << card if card[field].nil?
+          cards << card if values_considered_missing.include?(card[field])
         end
       end
       cards.map {|card| Card.new(card) }
