@@ -15,7 +15,7 @@ namespace :task do
 
   desc "Notify the team about all the cards that are missing shepherds"
   task notify_no_shepherds: :environment do
-    cards = Kanban::Api.cards_missing_shepherd
+    cards = Kanban::Api.cards_missing_tags
     NotificationMailer.no_shepherd(cards).deliver unless cards.empty?
   end
 
