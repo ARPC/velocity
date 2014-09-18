@@ -2,7 +2,7 @@ class NotificationMailer < ActionMailer::Base
   default from: "kanban@arpc.com"
   default to: "development@arpc.com"
 
-  def no_size(cards)
+  def no_estimate(cards)
     @cards = cards
     mail(subject: 'LeanKit: No Estimates!')
   end

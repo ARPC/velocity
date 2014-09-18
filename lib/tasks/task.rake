@@ -10,7 +10,7 @@ namespace :task do
   desc "Notify the team about all the cards that are missing estimates"
   task notify_no_estimates: :environment do
     cards = Kanban::Api.cards_missing_size
-    NotificationMailer.no_size(cards).deliver
+    NotificationMailer.no_estimate(cards).deliver
   end
 
   desc "Notify the team about all the cards that are missing shepherds"

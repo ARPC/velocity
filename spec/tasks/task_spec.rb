@@ -21,7 +21,7 @@ describe 'rake task' do
       cards = []
       mailer = double
       expect(Kanban::Api).to receive(:cards_missing_size).and_return(cards)
-      expect(NotificationMailer).to receive(:no_size).with(cards).and_return(mailer)
+      expect(NotificationMailer).to receive(:no_estimate).with(cards).and_return(mailer)
       expect(mailer).to receive(:deliver)
       Rake.application.invoke_task('task:notify_no_estimates')
     end

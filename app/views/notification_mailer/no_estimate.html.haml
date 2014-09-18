@@ -3,13 +3,13 @@
   %head
     = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true
   %body
-    %h1 Listing LeanKit Cards Without Shepherd
+    %h1 Listing LeanKit Cards Without Estimates
 
     %table
       %tr
         %th FogBugz ID
         %th Title
-        %th Estimate
+        %th Shepherd
         %th Lane
         %th Priority
         %th Type
@@ -19,7 +19,7 @@
         %tr
           %td= card.external_card_id
           %td= card.title
-          %td= card.size
+          %td= card.tags
           %td= card.lane
           %td= card.priority_text
           %td= card.type_name
