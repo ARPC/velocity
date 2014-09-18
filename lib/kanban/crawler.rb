@@ -6,7 +6,7 @@ module Kanban
     def snapshot_done_cards
       kanban_cards = Api.done_cards
       kanban_cards.each do |kanban_card|
-        TaskMetric.from(kanban_card).save! if TaskMetric.missing?(kanban_card)
+        TaskMetric.from(kanban_card).save! if TaskMetric.saveable?(kanban_card)
       end
     end
   end

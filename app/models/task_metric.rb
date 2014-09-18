@@ -9,7 +9,7 @@ class TaskMetric < ActiveRecord::Base
     })
   end
 
-  def self.missing?(card)
-    find_by_leankit_id(card.id).nil?
+  def self.saveable?(card)
+    !([nil, 0].include?(card.size)) && find_by_leankit_id(card.id).nil?
   end
 end

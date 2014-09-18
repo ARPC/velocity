@@ -23,17 +23,26 @@ RSpec.describe TaskMetric, :type => :model do
     end
   end
 
-  context '#missing' do
-    let(:card) { Kanban::Card.new(:id => 123) }
+  context '#saveable?' do
+    let(:card) { Kanban::Card.new(:id => 123, :size => 2) }
 
-    it 'is missing' do
+    it 'saveable if card is new' do
       TaskMetric.delete_all(:leankit_id => 123)
-      expect(TaskMetric.missing?(card)).to eq(true)
+      expect(TaskMetric.saveable?(card)).to eq(true)
     end
 
-    it 'is not missing' do
+    it 'not saveable if card already persisted' do
       TaskMetric.create!(:leankit_id => 123)
-      expect(TaskMetric.missing?(card)).to eq(false)
+      expect(TaskMetric.saveable?(card)).to eq(false)
+    end
+
+    it 'saveable if estimate is provided' do
+      expect(TaskMetric.saveable?(card)).to eq(true)
+    end
+
+    it 'not saveable if size is missing' do
+      card.size = 0
+      expect(TaskMetric.saveable?(card)).to eq(false)
     end
   end
 end
