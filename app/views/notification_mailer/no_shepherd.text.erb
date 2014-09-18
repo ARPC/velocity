@@ -3,5 +3,6 @@ Listing LeanKit Cards Without Shepherds
 
 FogBugz ID | Lane | Title
 --------------------------------------------------------------------------------
-- @cards.each do |card|
-  = "#{card.external_card_id} | #{card.lane} | #{card.title}"
+<% @cards.each do |card| %>
+  <%= card.external_card_id %> | <%= card.lane %> | <%= card.title %>
+<% end %>
