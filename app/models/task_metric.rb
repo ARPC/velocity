@@ -1,5 +1,6 @@
 class TaskMetric < ActiveRecord::Base
   def self.from(card)
+    puts "card id: #{card.id}, LastMove: #{card.last_move}"
     metric = TaskMetric.new
     metric.leankit_id = card.id
     metric.fog_bugz_id = card.external_card_id
@@ -10,6 +11,6 @@ class TaskMetric < ActiveRecord::Base
   end
 
   def self.missing?(card)
-    find_by_id(card.id).nil?
+    find_by_leankit_id(card.id).nil?
   end
 end

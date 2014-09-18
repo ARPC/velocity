@@ -27,12 +27,12 @@ RSpec.describe TaskMetric, :type => :model do
     let(:card) { Kanban::Card.new(:id => 123) }
 
     it 'is missing' do
-      TaskMetric.delete_all(:id => 123)
+      TaskMetric.delete_all(:leankit_id => 123)
       expect(TaskMetric.missing?(card)).to eq(true)
     end
 
     it 'is not missing' do
-      TaskMetric.create!(:id => 123)
+      TaskMetric.create!(:leankit_id => 123)
       expect(TaskMetric.missing?(card)).to eq(false)
     end
   end
