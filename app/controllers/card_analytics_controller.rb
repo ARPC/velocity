@@ -15,11 +15,31 @@ class CardAnalyticsController < ApplicationController
 
   def download_extract
     csv = CSV.generate do |csv|
-      csv << ['FogBugzId', 'Lane']
+      csv << ['FogBugz ID', 'Lane']
       Kanban::Api.all.each do |card|
         csv << [card.external_card_id, card.lane]
       end
     end
     send_data csv, filename: 'extract.csv', type: 'application/csv'
+  end
+
+  def download_missing_estimates
+    csv = CSV.generate do |csv|
+      csv << ['FogBugz ID', 'Title', 'Shepherd', 'Lane', 'Priority', 'Type', 'Block Reason']
+      Kanban::Api.all.each do |card|
+        csv << [card.external_card_id, card.title, card.tags, card.lane, card.priority_text, card.type_name, card.block_reason]
+      end
+    end
+    send_data csv, filename: 'missing_estimates.csv', type: 'application/csv'
+  end
+
+  def download_missing_shepherds
+    csv = CSV.generate do |csv|
+      csv << ['FogBugz ID', 'Title', 'Estimate', 'Lane', 'Priority', 'Type', 'Block Reason']
+      Kanban::Api.all.each do |card|
+        csv << [card.external_card_id, card.title, card.size, card.lane, card.priority_text, card.type_name, card.block_reason]
+      end
+    end
+    send_data csv, filename: 'missing_shepherds.csv', type: 'application/csv'
   end
 end

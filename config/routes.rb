@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   get 'card_analytics/velocity'
   get 'card_analytics/report'
   get 'card_analytics/download_extract'
+  get 'card_analytics/download_missing_estimates'
+  get 'card_analytics/download_missing_shepherds'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

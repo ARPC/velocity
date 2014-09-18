@@ -22,4 +22,18 @@ RSpec.describe CardAnalyticsController, :type => :controller do
       expect(response).to be_success
     end
   end
+
+  describe "GET download_missing_estimates" do
+    it "returns http success" do
+      get :download_missing_estimates
+      expect(response).to be_success
+    end
+  end
+
+  describe "GET download_missing_shepherds" do
+    it "returns http success" do
+      get :download_missing_shepherds
+      expect(response).to be_success
+    end
+  end
 end
