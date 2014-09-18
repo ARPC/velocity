@@ -18,6 +18,12 @@ namespace :task do
     cards = Kanban::Api.cards_missing_shepherd
     NotificationMailer.no_shepherd(cards).deliver unless cards.empty?
   end
+
+  desc "Provide an extract of every card and its lane"
+  task extract: :environment do
+    cards = Kanban::Api.all
+    NotificationMailer.extract(cards).deliver unless cards.empty?
+  end
 end
 
 # cards = Kanban::Cards.missing_shepherd

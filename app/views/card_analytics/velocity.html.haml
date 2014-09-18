@@ -1,5 +1,8 @@
 %h1 Velocity
 %p Our velocity for the past week is...
 .well
-  %h3
+  %h1.text-center
     %small= @velocity
+.well
+  .form-actions
+    = link_to 'Looking for extracts?', card_analytics_extract_url
