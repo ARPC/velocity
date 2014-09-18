@@ -10,6 +10,13 @@ describe Kanban::Api do
     expect(LeanKitKanban::Board).to receive(:find).with(46341228).and_return([@lkk_response])
   end
 
+  context '#all' do
+    it 'returns all cards in all lanes' do
+      cards = Kanban::Api.all
+      expect(cards.map {|card| card.id}).to include(get_card_id(@wip_lane, 0), get_card_id(@wip_lane, 1), get_card_id(@ready_to_release_lane, 0), get_card_id(@ready_to_release_lane, 1), get_card_id(@done_lane, 0), get_card_id(@done_lane, 1))
+    end
+  end
+
   context '#done_cards' do
     it 'returns Kanban::Card objects' do
       cards = Kanban::Api.done_cards

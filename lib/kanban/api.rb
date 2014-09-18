@@ -3,6 +3,17 @@ require 'kanban/card'
 
 module Kanban
   class Api
+    def self.all
+      cards = []
+      board = get_board
+      board['Lanes'].each do |lane|
+        lane['Cards'].each do |card|
+          cards << { :card => card, :lane => lane }
+        end
+      end
+      cards.map {|card| Card.new(card[:card].merge('Lane' => card[:lane]['Title'])) }
+    end
+
     def self.done_cards
       cards = []
       board = get_board
