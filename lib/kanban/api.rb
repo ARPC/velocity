@@ -7,7 +7,7 @@ module Kanban
       board = get_board
       done_lane = board['Lanes'].select {|lane| lane['Title'] == 'Done'}.first
       return [] if done_lane.nil?
-      done_lane['Cards'].map {|card| Card.new(card) }
+      done_lane['Cards'].map {|card| Card.new(card.merge('Lane' => 'Done')) }
     end
 
     def self.cards_missing_size
@@ -27,10 +27,10 @@ module Kanban
       board = get_board
       board['Lanes'].each do |lane|
         lane['Cards'].each do |card|
-          cards << card if values_considered_missing.include?(card[field])
+          cards << { :card => card, :lane => lane } if values_considered_missing.include?(card[field])
         end
       end
-      cards.map {|card| Card.new(card) }
+      cards.map {|card| Card.new(card[:card].merge('Lane' => card[:lane]['Title'])) }
     end
   end
 end
