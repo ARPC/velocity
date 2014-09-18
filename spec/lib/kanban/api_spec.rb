@@ -1,25 +1,67 @@
 require('kanban/api')
 
 describe Kanban::Api do
-  context '#done_cards' do
-    before(:each) do
-      @wip_cards = { 'Title' => 'WIP', 'Cards' => [{}, {}] }
-      @done_cards = { 'Title' => 'Done', 'Cards' => [{}, {}] }
-      @lkk_response = { 'Lanes' => [@wip_cards, @done_cards] }
-    end
+  before(:each) do
+    @wip_lane = { 'Title' => 'WIP', 'Cards' => [{'Id' => 1}, {'Id' => 2}] }
+    @done_lane = { 'Title' => 'Done', 'Cards' => [{'Id' => 3}, {'Id' => 4}] }
+    @lkk_response = { 'Lanes' => [@wip_lane, @done_lane] }
 
-    it 'returns the cards' do
-      expect(LeanKitKanban::Board).to receive(:find).with(46341228).and_return([@lkk_response])
+    expect(LeanKitKanban::Board).to receive(:find).with(46341228).and_return([@lkk_response])
+  end
+
+  context '#done_cards' do
+    it 'provides the done cards' do
       cards = Kanban::Api.done_cards
       expect(cards.length).to eq(2)
       cards.each {|card| expect(card).to be_a(Kanban::Card) }
     end
 
-    it 'only returns the done cards' do
-      @lkk_response['Lanes'].delete(@done_cards)
-      expect(LeanKitKanban::Board).to receive(:find).with(46341228).and_return([@lkk_response])
+    it 'ignores non-done cards' do
+      @lkk_response['Lanes'].delete(@done_lane)
       expect(Kanban::Card).not_to receive(:new).with(any_args)
       expect(Kanban::Api.done_cards).to eq([])
     end
+  end
+
+  context '#cards_missing_size' do
+    before(:each) do
+      @wip_lane['Cards'][0].delete('Size')
+      @wip_lane['Cards'][1]['Size'] = 54
+      @done_lane['Cards'][0].delete('Size')
+      @done_lane['Cards'][1]['Size'] = 12
+    end
+
+    it 'provides cards without sizes' do
+      cards = Kanban::Api.cards_missing_size
+      expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@done_lane, 0))
+    end
+
+    it 'ignores cards with sizes' do
+      cards = Kanban::Api.cards_missing_size
+      expect(cards.map {|card| card.id}).not_to contain_exactly(get_card_id(@wip_lane, 1), get_card_id(@done_lane, 1))
+    end
+  end
+
+  context '#cards_missing_tags' do
+    before(:each) do
+      @wip_lane['Cards'][0].delete('Tags')
+      @wip_lane['Cards'][1]['Tags'] = 'Shepherd: CJ'
+      @done_lane['Cards'][0].delete('Tags')
+      @done_lane['Cards'][1]['Tags'] = 'Shepherd: BC'
+    end
+
+    it 'provides cards without tags' do
+      cards = Kanban::Api.cards_missing_tags
+      expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@done_lane, 0))
+    end
+
+    it 'ignores cards with tags' do
+      cards = Kanban::Api.cards_missing_tags
+      expect(cards.map {|card| card.id}).not_to contain_exactly(get_card_id(@wip_lane, 1), get_card_id(@done_lane, 1))
+    end
+  end
+
+  def get_card_id(lane, card_index)
+    lane['Cards'][card_index]['Id']
   end
 end
