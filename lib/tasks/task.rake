@@ -7,11 +7,17 @@ namespace :task do
     bot.snapshot_done_cards
   end
 
-  desc "TODO"
-  task upload: :environment do
-    puts "upload"
+  desc "Notify the team about all the cards that are missing estimates"
+  task notify_no_estimates: :environment do
+    cards = Kanban::Api.cards_missing_size
+    NotificationMailer.no_size(cards).deliver
   end
 
+  desc "Notify the team about all the cards that are missing shepherds"
+  task notify_no_shepherds: :environment do
+    cards = Kanban::Api.cards_missing_shepherd
+    NotificationMailer.no_shepherd(cards).deliver
+  end
 end
 
 # cards = Kanban::Cards.missing_shepherd
