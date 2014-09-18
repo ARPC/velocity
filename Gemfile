@@ -43,6 +43,7 @@ gem 'haml-rails'
 gem 'bootstrap-sass'
 gem 'autoprefixer-rails'
 gem 'leankitkanban'
+gem 'american_date'
 
 group :test, :development do
   gem "rspec-rails"
