@@ -22,4 +22,18 @@ RSpec.describe TaskMetric, :type => :model do
       expect(metric.done_at).to eq(card.last_move)
     end
   end
+
+  context '#missing' do
+    let(:card) { Kanban::Card.new(:id => 123) }
+
+    it 'is missing' do
+      TaskMetric.delete_all(:id => 123)
+      expect(TaskMetric.missing?(card)).to eq(true)
+    end
+
+    it 'is not missing' do
+      TaskMetric.create!(:id => 123)
+      expect(TaskMetric.missing?(card)).to eq(false)
+    end
+  end
 end

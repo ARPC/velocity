@@ -8,4 +8,8 @@ class TaskMetric < ActiveRecord::Base
     metric.done_at = card.last_move
     metric
   end
+
+  def self.missing?(card)
+    find_by_id(card.id).nil?
+  end
 end
