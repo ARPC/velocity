@@ -12,24 +12,24 @@ describe Kanban::Api do
 
   context '#all' do
     it 'returns all cards in all lanes' do
-      cards = Kanban::Api.all
+      cards = Kanban::Api.all(force_refresh: true)
       expect(cards.map {|card| card.id}).to include(get_card_id(@wip_lane, 0), get_card_id(@wip_lane, 1), get_card_id(@ready_to_release_lane, 0), get_card_id(@ready_to_release_lane, 1), get_card_id(@done_lane, 0), get_card_id(@done_lane, 1))
     end
   end
 
   context '#done_cards' do
     it 'returns Kanban::Card objects' do
-      cards = Kanban::Api.done_cards
+      cards = Kanban::Api.done_cards(force_refresh: true)
       cards.each {|card| expect(card).to be_a(Kanban::Card) }
     end
 
     it 'provides the cards in Done lane' do
-      cards = Kanban::Api.done_cards
+      cards = Kanban::Api.done_cards(force_refresh: true)
       expect(cards.map {|card| card.id}).to include(get_card_id(@done_lane, 0), get_card_id(@done_lane, 1))
     end
 
     it 'provides the cards in Ready To Release lane' do
-      cards = Kanban::Api.done_cards
+      cards = Kanban::Api.done_cards(force_refresh: true)
       expect(cards.map {|card| card.id}).to include(get_card_id(@ready_to_release_lane, 0), get_card_id(@ready_to_release_lane, 1))
     end
 
@@ -37,7 +37,7 @@ describe Kanban::Api do
       @lkk_response['Lanes'].delete(@done_lane)
       @lkk_response['Lanes'].delete(@ready_to_release_lane)
       expect(Kanban::Card).not_to receive(:new).with(any_args)
-      expect(Kanban::Api.done_cards).to eq([])
+      expect(Kanban::Api.done_cards(force_refresh: true)).to eq([])
     end
   end
 
@@ -52,7 +52,7 @@ describe Kanban::Api do
     end
 
     it 'provides cards without sizes' do
-      cards = Kanban::Api.cards_missing_size
+      cards = Kanban::Api.cards_missing_size(force_refresh: true)
       expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@ready_to_release_lane, 0), get_card_id(@done_lane, 0))
     end
 
@@ -60,12 +60,12 @@ describe Kanban::Api do
       @wip_lane['Cards'][0]['Size'] = 0
       @ready_to_release_lane['Cards'][0]['Size'] = 0
       @done_lane['Cards'][0]['Size'] = 0
-      cards = Kanban::Api.cards_missing_size
+      cards = Kanban::Api.cards_missing_size(force_refresh: true)
       expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@ready_to_release_lane, 0), get_card_id(@done_lane, 0))
     end
 
     it 'ignores cards with sizes' do
-      cards = Kanban::Api.cards_missing_size
+      cards = Kanban::Api.cards_missing_size(force_refresh: true)
       expect(cards.map {|card| card.id}).not_to contain_exactly(get_card_id(@wip_lane, 1), get_card_id(@ready_to_release_lane, 1), get_card_id(@done_lane, 1))
     end
   end
@@ -81,7 +81,7 @@ describe Kanban::Api do
     end
 
     it 'provides cards without tags' do
-      cards = Kanban::Api.cards_missing_tags
+      cards = Kanban::Api.cards_missing_tags(force_refresh: true)
       expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@ready_to_release_lane, 0), get_card_id(@done_lane, 0))
     end
 
@@ -89,12 +89,12 @@ describe Kanban::Api do
       @wip_lane['Cards'][0]['Tags'] = ''
       @ready_to_release_lane['Cards'][0]['Tags'] = ''
       @done_lane['Cards'][0]['Tags'] = ''
-      cards = Kanban::Api.cards_missing_tags
+      cards = Kanban::Api.cards_missing_tags(force_refresh: true)
       expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@ready_to_release_lane, 0), get_card_id(@done_lane, 0))
     end
 
     it 'ignores cards with tags' do
-      cards = Kanban::Api.cards_missing_tags
+      cards = Kanban::Api.cards_missing_tags(force_refresh: true)
       expect(cards.map {|card| card.id}).not_to contain_exactly(get_card_id(@wip_lane, 1), get_card_id(@ready_to_release_lane, 1), get_card_id(@done_lane, 1))
     end
   end
