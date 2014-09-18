@@ -1,6 +1,5 @@
 class TaskMetric < ActiveRecord::Base
   def self.from(card)
-    puts "card id: #{card.id}, LastMove: #{card.last_move}"
     TaskMetric.new({
       :leankit_id => card.id,
       :fog_bugz_id => card.external_card_id,

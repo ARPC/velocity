@@ -1,18 +1,10 @@
-require 'leankitkanban'
+require 'kanban'
 
 namespace :task do
-  desc "TODO"
-  task process: :environment do
-    puts "process"
-    response = LeanKitKanban::Board.find(46341228)
-
-    response[0]['Lanes'].each do |lane|
-      p lane['Title']
-      lane['Cards'].each do |card|
-        #p card
-        p "Lane: #{lane['Title']}|Title: #{card['Title']}|External ID: #{card['ExternalCardID']}|Size: #{card['Size']}"
-      end
-    end
+  desc "Processes done cards to support velocity calculations"
+  task process_done: :environment do
+    bot = Kanban::Crawler.new
+    bot.snapshot_done_cards
   end
 
   desc "TODO"
@@ -33,6 +25,3 @@ end
 # analytics.velocity
 # analytics.cards_completed
 # analytics.range
-#
-# bot = Kanban::Crawler.new
-# bot.snapshot_done_cards
