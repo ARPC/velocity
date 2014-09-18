@@ -1,5 +1,6 @@
 require 'leankitkanban'
 require 'kanban/card'
+require 'active_support/core_ext/numeric/time'
 
 module Kanban
   class Api
@@ -35,7 +36,13 @@ module Kanban
     end
 
     def self.get_board
-      LeanKitKanban::Board.find(46341228).first
+      if (@board_refreshed_at.nil? || !@board_refreshed_at.between?(10.minutes.ago, 0.minutes.ago))
+        puts "refreshing board!"
+        @board = LeanKitKanban::Board.find(46341228).first
+        @board_refreshed_at = Time.now
+      end
+
+      @board
     end
 
     def self.cards_missing_by(field, values_considered_missing)
