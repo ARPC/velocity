@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   get 'card_analytics/velocity'
-  get 'card_analytics/extract'
+  get 'card_analytics/report'
   get 'card_analytics/download_extract'
 
   # The priority is based upon order of creation: first created -> highest priority.

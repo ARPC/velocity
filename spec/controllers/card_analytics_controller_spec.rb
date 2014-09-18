@@ -9,11 +9,17 @@ RSpec.describe CardAnalyticsController, :type => :controller do
     end
   end
 
-  describe "GET extract" do
+  describe "GET report" do
     it "returns http success" do
-      get :extract
+      get :report
       expect(response).to be_success
     end
   end
 
+  describe "GET download_extract" do
+    it "returns http success" do
+      get :download_extract
+      expect(response).to be_success
+    end
+  end
 end

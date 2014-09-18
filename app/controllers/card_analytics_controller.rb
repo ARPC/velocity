@@ -10,7 +10,7 @@ class CardAnalyticsController < ApplicationController
     end
   end
 
-  def extract
+  def report
   end
 
   def download_extract
