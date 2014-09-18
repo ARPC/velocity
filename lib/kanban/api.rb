@@ -4,10 +4,15 @@ require 'kanban/card'
 module Kanban
   class Api
     def self.done_cards
+      cards = []
       board = get_board
-      done_lane = board['Lanes'].select {|lane| lane['Title'] == 'Done'}.first
-      return [] if done_lane.nil?
-      done_lane['Cards'].map {|card| Card.new(card.merge('Lane' => 'Done')) }
+      done_lanes = board['Lanes'].select {|lane| ['Done', 'Ready to Release'].include?(lane['Title'])}
+      done_lanes.each do |lane|
+        lane['Cards'].each do |card|
+          cards << { :card => card, :lane => lane }
+        end
+      end
+      cards.map {|card| Card.new(card[:card].merge('Lane' => card[:lane]['Title'])) }
     end
 
     def self.cards_missing_size

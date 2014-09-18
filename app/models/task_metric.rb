@@ -5,7 +5,8 @@ class TaskMetric < ActiveRecord::Base
       :fog_bugz_id => card.external_card_id,
       :title => card.title,
       :estimate => card.size,
-      :done_at => card.last_move
+      :done_at => card.last_move,
+      :lane => card.lane
     })
   end
 

@@ -10,6 +10,7 @@ RSpec.describe TaskMetric, :type => :model do
       card.title = 'my card title'
       card.size = 4
       card.last_move = Time.now
+      card.lane = 'The Lane'
       card
     end
 
@@ -20,6 +21,7 @@ RSpec.describe TaskMetric, :type => :model do
       expect(metric.title).to eq(card.title)
       expect(metric.estimate).to eq(card.size)
       expect(metric.done_at).to eq(card.last_move)
+      expect(metric.lane).to eq(card.lane)
     end
   end
 
