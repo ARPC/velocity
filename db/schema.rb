@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20140918154819) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "task_metrics", force: true do |t|
     t.integer  "leankit_id"
     t.integer  "fog_bugz_id"
