@@ -44,6 +44,8 @@ gem 'bootstrap-sass'
 gem 'autoprefixer-rails'
 gem 'leankitkanban'
 gem 'american_date'
+gem 'groupdate'
+gem 'squeel'
 
 group :test, :development do
   gem "rspec-rails"

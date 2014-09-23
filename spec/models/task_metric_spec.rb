@@ -47,4 +47,22 @@ RSpec.describe TaskMetric, :type => :model do
       expect(TaskMetric.saveable?(card)).to eq(false)
     end
   end
+
+  context 'groupdate extensions' do
+    it 'groups by week' do
+      TaskMetric.create!(:leankit_id => 1, :estimate => 2, :done_at => 1.weeks.ago)
+      TaskMetric.create!(:leankit_id => 2, :estimate => 3, :done_at => 1.weeks.ago)
+
+      TaskMetric.create!(:leankit_id => 3, :estimate => 52, :done_at => 2.weeks.ago)
+      TaskMetric.create!(:leankit_id => 4, :estimate => 22, :done_at => 2.weeks.ago)
+
+      TaskMetric.create!(:leankit_id => 5, :estimate => 67, :done_at => 3.weeks.ago)
+      TaskMetric.create!(:leankit_id => 6, :estimate => 26, :done_at => 3.weeks.ago)
+
+      group = TaskMetric.group_by_week(:done_at).sum(:estimate)
+      expect(group[1.weeks.ago.beginning_of_week]).to eq(5)
+      expect(group[2.weeks.ago.beginning_of_week]).to eq(74)
+      expect(group[3.weeks.ago.beginning_of_week]).to eq(93)
+    end
+  end
 end
