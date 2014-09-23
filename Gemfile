@@ -46,6 +46,7 @@ gem 'leankitkanban'
 gem 'american_date'
 gem 'groupdate'
 gem 'squeel'
+gem 'chartkick'
 
 group :test, :development do
   gem "rspec-rails"
