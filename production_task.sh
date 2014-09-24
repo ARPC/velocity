@@ -1,6 +1,7 @@
 #!/bin/bash
 
-source $HOME/.rvm/environments/velocity
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+rvm use velocity
 
 for TASK_NAME in "$@";
 do
