@@ -22,18 +22,6 @@ namespace :task do
   desc "Provide an extract of every card and its lane"
   task extract: :environment do
     csv = Kanban::Report.card_and_lane
-    NotificationMailer.extract(csv).deliver unless cards.empty?
+    NotificationMailer.extract(csv).deliver
   end
 end
-
-# cards = Kanban::Cards.missing_shepherd
-# Notifications.no_shepherd(cards).deliver
-#
-# cards = Kanban::Cards.missing_size
-# Notifications.no_size(cards).deliver
-#
-# cards = Kanban::Cards.done_in(5.weeks.ago..3.weeks.ago)
-# analytics = CardAnalytics.new(cards)
-# analytics.velocity
-# analytics.cards_completed
-# analytics.range
