@@ -2,8 +2,8 @@ require 'kanban'
 
 class CardAnalyticsController < ApplicationController
   def velocity
-    @velocity = TaskMetric.where(:done_at => 1.weeks.ago..0.weeks.ago).map(&:estimate).inject(0, :+)
     @chart_data = TaskMetric.where { done_at >= 12.weeks.ago }.group_by_week(:done_at, :format => '%m/%d/%Y').sum(:estimate)
+    @velocity = @chart_data.to_a.last[1]
     respond_to do |format|
       format.html
       format.json { render json: @velocity }
