@@ -5,6 +5,7 @@ RSpec.describe CardAnalyticsController, :type => :controller do
 
   describe "GET velocity" do
     it "returns http success" do
+      TaskMetric.create!(:estimate => 5, :fog_bugz_id => 123, :done_at => 1.weeks.ago)
       get :velocity
       expect(response).to be_success
     end
