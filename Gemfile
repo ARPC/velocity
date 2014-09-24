@@ -47,6 +47,10 @@ gem 'american_date'
 gem 'groupdate'
 gem 'squeel'
 gem 'chartkick'
+gem 'capistrano'
+gem 'capistrano-bundler'
+gem 'capistrano-rails'
+gem 'capistrano-rvm', github: "capistrano/rvm"
 
 group :test, :development do
   gem "rspec-rails"
