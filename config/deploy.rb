@@ -23,7 +23,7 @@ set :deploy_to, '/home/deploy/velocity'
 # set :pty, true
 
 # Default value for :linked_files is []
-set :linked_files, %w{config/database.yml config/initializers/lean_kit_kanban.rb}
+set :linked_files, %w{config/database.yml config/secrets.yml config/initializers/lean_kit_kanban.rb}
 
 # Default value for linked_dirs is []
 set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
