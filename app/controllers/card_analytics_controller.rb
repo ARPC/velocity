@@ -1,5 +1,4 @@
 require 'kanban'
-require 'csv'
 
 class CardAnalyticsController < ApplicationController
   def velocity
@@ -14,32 +13,17 @@ class CardAnalyticsController < ApplicationController
   end
 
   def download_extract
-    csv = CSV.generate do |csv|
-      csv << ['FogBugz ID', 'Lane']
-      Kanban::Api.all.each do |card|
-        csv << [card.external_card_id, card.lane]
-      end
-    end
+    csv = Kanban::Report.card_and_lane
     send_data csv, filename: 'extract.csv', type: 'application/csv'
   end
 
   def download_missing_estimates
-    csv = CSV.generate do |csv|
-      csv << ['FogBugz ID', 'Title', 'Shepherd', 'Lane', 'Priority', 'Type', 'Block Reason']
-      Kanban::Api.all.each do |card|
-        csv << [card.external_card_id, card.title, card.tags, card.lane, card.priority_text, card.type_name, card.block_reason]
-      end
-    end
+    csv = Kanban::Report.cards_missing_size
     send_data csv, filename: 'missing_estimates.csv', type: 'application/csv'
   end
 
   def download_missing_shepherds
-    csv = CSV.generate do |csv|
-      csv << ['FogBugz ID', 'Title', 'Estimate', 'Lane', 'Priority', 'Type', 'Block Reason']
-      Kanban::Api.all.each do |card|
-        csv << [card.external_card_id, card.title, card.size, card.lane, card.priority_text, card.type_name, card.block_reason]
-      end
-    end
+    csv = Kanban::Report.cards_missing_tags
     send_data csv, filename: 'missing_shepherds.csv', type: 'application/csv'
   end
 end

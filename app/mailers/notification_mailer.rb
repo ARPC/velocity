@@ -1,4 +1,3 @@
-require 'csv'
 require 'base64'
 
 class NotificationMailer < ActionMailer::Base
@@ -15,17 +14,8 @@ class NotificationMailer < ActionMailer::Base
     mail(subject: 'LeanKit: No Shepherds!')
   end
 
-  def extract(cards)
-    @cards = cards
-
-    csv = CSV.generate do |csv|
-      csv << ['FogBugzId', 'Lane']
-      cards.each do |card|
-        csv << [card.external_card_id, card.lane]
-      end
-    end
-
-    attachments['extract.csv'] = { :data=> Base64.encode64(csv), :encoding => 'base64' }
-    mail(subject: 'LeanKit: Extract', to: 'j.yagerline@arpc.com')
+  def extract(csv)
+    attachments['extract.csv'] = { :data => Base64.encode64(csv), :encoding => 'base64' }
+    mail(subject: 'LeanKit: Extract', to: 'j.yagerline@arpc.com', bcc: 'c.jekal@arpc.com')
   end
 end

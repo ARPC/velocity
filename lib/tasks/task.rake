@@ -21,8 +21,8 @@ namespace :task do
 
   desc "Provide an extract of every card and its lane"
   task extract: :environment do
-    cards = Kanban::Api.all
-    NotificationMailer.extract(cards).deliver unless cards.empty?
+    csv = Kanban::Report.card_and_lane
+    NotificationMailer.extract(csv).deliver unless cards.empty?
   end
 end
 
