@@ -5,7 +5,7 @@
     %small= @velocity
 %p Previous weeks
 = javascript_include_tag "//www.google.com/jsapi", "chartkick"
-= column_chart TaskMetric.where { done_at >= 12.weeks.ago }.group_by_week(:done_at, :format => '%m/%d/%Y').sum(:estimate)
+= column_chart @chart_data
 .well
   .form-actions
     = link_to 'Looking for reports?', card_analytics_report_url
