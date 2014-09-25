@@ -41,4 +41,13 @@ RSpec.describe CardAnalyticsController, :type => :controller do
       expect(response).to be_success
     end
   end
+
+  describe "GET velocity_extract" do
+    it "returns http success" do
+      expect(Analytics).to receive(:velocity).and_return({ "09/18/2014" => 13, "09/25/2014" => 15 })
+      get :download_velocity_extract
+      expect(response).to be_success
+      expect(response.filename).to eq('velocity_extract.csv')
+    end
+  end
 end

@@ -1,8 +1,10 @@
 require 'kanban'
+require 'analytics'
+require 'csv_utility'
 
 class CardAnalyticsController < ApplicationController
   def velocity
-    @chart_data = TaskMetric.where { done_at >= 12.weeks.ago }.group_by_week(:done_at, :format => '%m/%d/%Y').sum(:estimate)
+    @chart_data = Analytics.velocity(:from => 12.weeks.ago)
     @velocity = @chart_data.to_a.last[1]
     respond_to do |format|
       format.html
@@ -26,5 +28,11 @@ class CardAnalyticsController < ApplicationController
   def download_missing_shepherds
     csv = Kanban::Report.cards_missing_tags
     send_data csv, filename: 'missing_shepherds.csv', type: 'application/csv'
+  end
+
+  def download_velocity_extract
+    analytics = Analytics.velocity
+    csv = CsvUtility.to_csv(analytics, :headers => ['Week Of', 'Velocity']) {|analytic| [analytic[0], analytic[1]] }
+    send_data csv, filename: 'velocity_extract.csv', type: 'application/csv'
   end
 end
