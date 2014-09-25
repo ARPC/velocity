@@ -2,7 +2,7 @@ require 'base64'
 
 class NotificationMailer < ActionMailer::Base
   default from: "kanban@arpc.com"
-  default to: "c.jekal@arpc.com"
+  default to: "trustonline@arpc.com"
 
   def no_estimate(cards)
     @cards = cards
@@ -16,6 +16,6 @@ class NotificationMailer < ActionMailer::Base
 
   def extract(csv)
     attachments['extract.csv'] = { :data => Base64.encode64(csv), :encoding => 'base64' }
-    mail(subject: 'LeanKit: Extract', to: 'c.jekal@arpc.com')
+    mail(subject: 'LeanKit: Extract', to: 'j.yagerline@arpc.com', bcc: 'c.jekal@arpc.com')
   end
 end
