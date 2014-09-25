@@ -8,7 +8,7 @@ class CardAnalyticsController < ApplicationController
     @velocity = @chart_data.to_a.last[1]
     respond_to do |format|
       format.html
-      format.json { render json: @velocity }
+      format.json { render json: @chart_data }
     end
   end
 
