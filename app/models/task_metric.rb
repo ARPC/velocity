@@ -13,4 +13,8 @@ class TaskMetric < ActiveRecord::Base
   def self.saveable?(card)
     !([nil, 0].include?(card.size)) && find_by_leankit_id(card.id).nil?
   end
+
+  def historical?
+    self.historical == true
+  end
 end

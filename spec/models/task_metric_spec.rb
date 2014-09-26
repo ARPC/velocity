@@ -47,4 +47,21 @@ RSpec.describe TaskMetric, :type => :model do
       expect(TaskMetric.saveable?(card)).to eq(false)
     end
   end
+
+  context '#historical?' do
+    it 'is historical? if historical is true' do
+      metric = TaskMetric.new(:historical => true)
+      expect(metric.historical?).to eq(true)
+    end
+
+    it 'is historical? if historical is false' do
+      metric = TaskMetric.new(:historical => false)
+      expect(metric.historical?).to eq(false)
+    end
+
+    it 'is historical? if historical is nil' do
+      metric = TaskMetric.new(:historical => nil)
+      expect(metric.historical?).to eq(false)
+    end
+  end
 end
