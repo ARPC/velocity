@@ -309,23 +309,31 @@ namespace :one_time do
     ]
 
     to_up.each do |up|
-      cards = LeanKitKanban::Card.find_by_external_id(46341228, up[:fogbugz_id])[0]
-      puts "TWO CARDS FOUND! FB: #{up[:fogbugz_id]}" if cards.length > 0
+      all_cards = LeanKitKanban::Card.find_by_external_id(46341228, up[:fogbugz_id])[0]
+      puts "!!!!!!!!!!!! More than one (#{all_cards.length}) for FB: #{up[:fogbugz_id]}" if all_cards.length > 1
+      existing_estimates = all_cards.map {|card| card['Size'] }.select {|size| size > 0 }.inject(0, :+)
+      puts "existing estimates: #{existing_estimates}, total is: #{up[:size]}"
+      cards = all_cards.select do |card|
+        in_done = ['Done', 'Ready to Release'].include?(find_lane(card['LaneId']))
+        no_estimate = card['Size'].blank? || card['Size'] == 0
+        in_done && no_estimate
+      end
+      puts "MORE THAN ONE CARDS (#{cards.length}) FOUND! FB: #{up[:fogbugz_id]}" if cards.length > 1
       cards.each do |card|
-        if card['Size'].blank? || card['Size'] == 0
-          lane = find_lane(card['LaneId'])
-          next unless ['Done', 'Ready to Release'].include?(lane)
-          puts "FB: #{up[:fogbugz_id]} ID: #{card['Id']} changing '#{card['Size']}' to '#{up[:size]}'"
-          card['Size'] = up[:size]
-          response = LeanKitKanban::Card.update(46341228, card)
-          raise "The card FB: #{up[:fogbugz_id]} failed to update.\n#{response}" if response[0]['BoardVersion'].blank?
+        lane = find_lane(card['LaneId'])
+        new_size = ((up[:size].to_f - existing_estimates.to_f)/cards.length.to_f).ceil
+        puts "zzzzOMG!!!! setting size to 1 b/c i'm too low!!! was #{new_size}" if new_size < 1
+        new_size = 1 if new_size < 1
+        puts "FB: #{up[:fogbugz_id]} ID: #{card['Id']} changing '#{card['Size']}' to '#{new_size}'"
+        card['Size'] = new_size
+        response = LeanKitKanban::Card.update(46341228, card)
+        raise "The card FB: #{up[:fogbugz_id]} failed to update.\n#{response}" if response[0]['BoardVersion'].blank?
 
-          kc = Kanban::Card.new(card.merge(:lane => lane))
-          if TaskMetric.saveable?(kc)
-            metric = TaskMetric.from(kc)
-            metric.historical = true
-            metric.save!
-          end
+        kc = Kanban::Card.new(card.merge(:lane => lane))
+        if TaskMetric.saveable?(kc)
+          metric = TaskMetric.from(kc)
+          metric.historical = true
+          metric.save!
         end
       end
     end
