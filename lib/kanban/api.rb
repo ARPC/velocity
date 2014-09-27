@@ -17,7 +17,7 @@ module Kanban
     end
 
     def self.cards_missing_tags(options = {})
-      cards_by(options) {|lane, card| [nil, ''].include?(card['Tags']) }
+      cards_by(options) {|lane, card| lane != 'Saddle up' && [nil, ''].include?(card['Tags']) }
     end
 
     def self.cards_by(options = {})
