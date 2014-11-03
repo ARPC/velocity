@@ -4,12 +4,19 @@ require 'csv_utility'
 
 class CardAnalyticsController < ApplicationController
   def velocity
-    @chart_data = Analytics.velocity(:from => 12.weeks.ago)
+    @all_velocities = Analytics.velocity.to_a
+    @chart_data = @all_velocities[-12..-1].to_h
+    @avg_velocity = avg(@all_velocities)
+    @last_4_avg_velocity = avg(@all_velocities[-5..-2])
     @velocity = @chart_data.to_a.last[1]
     respond_to do |format|
       format.html
       format.json { render json: @chart_data }
     end
+  end
+
+  def avg(velocities)
+    velocities.inject(0.0) {|result, el| result + el[1]}/velocities.size.to_f
   end
 
   def report

@@ -6,7 +6,19 @@ RSpec.describe CardAnalyticsController, :type => :controller do
 
   describe "GET velocity" do
     it "returns http success" do
-      TaskMetric.create!(:estimate => 5, :fog_bugz_id => 123, :done_at => 1.weeks.ago)
+      TaskMetric.create!(:estimate => 5, :fog_bugz_id => 1231, :done_at => 0.weeks.ago)
+      TaskMetric.create!(:estimate => 6, :fog_bugz_id => 1232, :done_at => 1.weeks.ago)
+      TaskMetric.create!(:estimate => 7, :fog_bugz_id => 1233, :done_at => 2.weeks.ago)
+      TaskMetric.create!(:estimate => 8, :fog_bugz_id => 1234, :done_at => 3.weeks.ago)
+      TaskMetric.create!(:estimate => 9, :fog_bugz_id => 1235, :done_at => 4.weeks.ago)
+      TaskMetric.create!(:estimate => 10, :fog_bugz_id => 1236, :done_at => 5.weeks.ago)
+      TaskMetric.create!(:estimate => 1, :fog_bugz_id => 1237, :done_at => 6.weeks.ago)
+      TaskMetric.create!(:estimate => 2, :fog_bugz_id => 1238, :done_at => 7.weeks.ago)
+      TaskMetric.create!(:estimate => 3, :fog_bugz_id => 1239, :done_at => 8.weeks.ago)
+      TaskMetric.create!(:estimate => 4, :fog_bugz_id => 12310, :done_at => 9.weeks.ago)
+      TaskMetric.create!(:estimate => 5, :fog_bugz_id => 12311, :done_at => 10.weeks.ago)
+      TaskMetric.create!(:estimate => 6, :fog_bugz_id => 12312, :done_at => 11.weeks.ago)
+      TaskMetric.create!(:estimate => 7, :fog_bugz_id => 12313, :done_at => 12.weeks.ago)
       get :velocity
       expect(response).to be_success
     end
