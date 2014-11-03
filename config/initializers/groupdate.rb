@@ -1,1 +1,1 @@
-Groupdate.week_start = :mon
+Groupdate.week_start = :thu
