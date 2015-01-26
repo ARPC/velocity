@@ -28,3 +28,13 @@ LeanKitKanban::Config.password = "your-password"
 LeanKitKanban::Config.account = "your-account"
 
 * You are done when all of the specs pass.
+
+You need to populate your DB with done cards now...
+* Processes done cards to support velocity calculations
+rake task:process_done
+* Notify the team about all the cards that are missing estimates
+rake notifiy:no_estimates
+* Notify the team about all the cards that are missing estimates
+rake notify:no_shepherds
+* Provide an extract of every card and its lane
+rake notify:extract
