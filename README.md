@@ -20,4 +20,11 @@ Getting Setup
 * copy the `config/secrets_sample.yml` file to `config/secrets.yml`
 * generate a secret key using `rake secret`
 * Run `rspec`
+* Setup board id in lib/kanban/api.rb
+* create a file config/lean_kit_kanban.rb with your user credentials
+
+LeanKitKanban::Config.email = "your-email@address.com"
+LeanKitKanban::Config.password = "your-password"
+LeanKitKanban::Config.account = "your-account"
+
 * You are done when all of the specs pass.
