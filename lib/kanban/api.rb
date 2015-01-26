@@ -9,7 +9,7 @@ module Kanban
     end
 
     def self.done_cards(options = {})
-      cards_by(options) {|lane, card| ['Done', 'Ready to Release'].include?(lane['Title']) }
+      cards_by(options) {|lane, card| ['Done'].include?(lane['Title']) }
     end
 
     def self.cards_missing_size(options = {})
