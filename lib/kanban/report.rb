@@ -6,7 +6,7 @@ require 'csv_utility'
 module Kanban
   class Report
     def self.card_and_lane
-      CsvUtility.to_csv(Kanban::Api.all, :headers => [
+      CsvUtility.to_csv(Kanban::Api.all_cards, :headers => [
         'Board',
         'FogBugz ID',
         'Lane'
