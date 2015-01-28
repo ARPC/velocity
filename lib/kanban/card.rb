@@ -1,3 +1,5 @@
+require 'kanban/board'
+
 module Kanban
   class Card
     def initialize(json = {})
@@ -25,6 +27,35 @@ module Kanban
 
     def is_assignment(key)
       key.end_with?('=')
+    end
+
+    def is_completed
+      name = value_of('Lane', '')
+      Board.get_lane_type(name) == 'completed'
+    end
+
+    def is_in_backlog
+      name = value_of('Lane', '')
+      Board.get_lane_type(name) == 'backlog'
+    end
+
+    def is_missing_size
+      value_of('Size', 0) <= 0
+    end
+
+    def is_missing_tags
+      value_of('Tags', '').empty?
+    end
+
+    def week_of
+      text = value_of('LastMove', DateTime.now.to_s)
+      date = DateTime.parse(text)
+      offset = date.wday == 4 ? 0 : 7
+      date.beginning_of_week(:thursday) + offset
+    end
+
+    def value_of(name, default)
+      @json[name].nil? ? default : @json[name]
     end
   end
 end

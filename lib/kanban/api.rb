@@ -1,45 +1,74 @@
 require 'leankitkanban'
 require 'kanban/card'
+require 'kanban/config'
+require 'kanban/board'
 require 'active_support/core_ext/numeric/time'
 
 module Kanban
   class Api
-    def self.all(options = {})
-      cards_by(options) {|lane, card| true }
-    end
+    @cache_refreshed_at = DateTime.new(1970, 1, 1)
+    @cache = []
 
     def self.done_cards(options = {})
-      cards_by(options) {|lane, card| ['Done', 'Ready to Release'].include?(lane['Title']) }
+      self.all_cards(options).find_all {|card| card.is_completed }
     end
 
     def self.cards_missing_size(options = {})
-      cards_by(options) {|lane, card| [nil, 0].include?(card['Size']) }
+      self.all_cards(options).find_all {|card| card.is_missing_size }
     end
 
     def self.cards_missing_tags(options = {})
-      cards_by(options) {|lane, card| lane['Title'] != 'Saddle up' && [nil, ''].include?(card['Tags']) }
+      self.all_cards(options).find_all {|card| card.is_missing_tags && !card.is_in_backlog }
     end
 
-    def self.cards_by(options = {})
-      cards = []
-      board = get_board(options)
-      board['Lanes'].each do |lane|
-        lane['Cards'].each do |card|
-          yield_val = yield(lane, card) if block_given?
-          cards << { :card => card, :lane => lane } if yield_val
-        end
+    def self.all_cards(options = {})
+      all_cards = []
+      boards = get_boards(options)
+      boards.each do |board|
+        all_cards += board.get_cards(options)
       end
-      cards.map {|card| Card.new(card[:card].merge('Lane' => card[:lane]['Title'])) }
+      all_cards
     end
 
-    def self.get_board(options = {})
+    def self.clear_cache
+      @cache_refreshed_at = DateTime.new(1970, 1, 1)
+      @cache = []
+    end
+
+    def self.ignore_cache(options)
       opts = { :force_refresh => false }.merge(options)
-      if (opts[:force_refresh] || @board_refreshed_at.nil? || !@board_refreshed_at.between?(10.minutes.ago, 0.minutes.ago))
-        @board = LeanKitKanban::Board.find(46341228).first
-        @board_refreshed_at = Time.now
+
+      if opts[:force_refresh]
+        return true
       end
 
-      @board
+      !@cache_refreshed_at.between?(10.minutes.ago, 0.minutes.ago)
     end
+
+    def self.get_boards(options = {})
+      if self.ignore_cache options
+        data = LeanKitKanban::Board.all
+        valid_boards = Kanban::Config.board_ids
+
+        all_boards = []
+        data.each do |boards|
+          boards.each do |board|
+            id = board['Id']
+            if valid_boards.include? id
+              all_boards << Kanban::Board.new(id: id, title: board['Title'])
+            end
+          end
+        end
+        @cache = all_boards.flatten
+        @cache_refreshed_at = Time.now
+      end
+
+      @cache
+    end
+
+    def self.get_board(board_id)
+      LeanKitKanban::Board.find(board_id).first
+    end
+
   end
 end
