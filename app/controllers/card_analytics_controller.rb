@@ -8,7 +8,11 @@ class CardAnalyticsController < ApplicationController
     @chart_data = @all_velocities[-12..-1].to_h
     @avg_velocity = avg(@all_velocities)
     @last_4_avg_velocity = avg(@all_velocities[-5..-2])
-    @velocity = @chart_data.to_a.last[1]
+    if @chart_data.nil? || @chart_data.empty?
+      @velocity = 0
+    else
+      @velocity = @chart_data.to_a.last[1]
+    end
     respond_to do |format|
       format.html
       format.json { render json: @chart_data }
@@ -16,7 +20,11 @@ class CardAnalyticsController < ApplicationController
   end
 
   def avg(velocities)
-    velocities.inject(0.0) {|result, el| result + el[1]}/velocities.size.to_f
+    if velocities.nil? || velocities.empty?
+      0
+    else
+      velocities.inject(0.0) {|result, el| result + el[1]}/velocities.size.to_f
+    end
   end
 
   def report
