@@ -1,4 +1,6 @@
+require 'kanban/config'
 require 'kanban/card'
+require 'kanban/board'
 require 'kanban/api'
 require 'kanban/crawler'
 require 'kanban/report'

@@ -26,6 +26,10 @@ Getting Setup
 LeanKitKanban::Config.email = "your-email@address.com"
 LeanKitKanban::Config.password = "your-password"
 LeanKitKanban::Config.account = "your-account"
+Rails.application.config.lean_kit_board_ids = [10000, 10001, 10002, 10003]
+Rails.application.config.lean_kit_backlog_lanes = ['Backlog']
+Rails.application.config.lean_kit_active_lanes = ['Working', 'Code Review']
+Rails.application.config.lean_kit_completed_lanes = ['Done']
 
 * You are done when all of the specs pass.
 

@@ -1,105 +1,193 @@
 require('kanban/api')
+require('kanban/config')
+require('kanban/card')
+require('kanban/board')
 
 describe Kanban::Api do
   before(:each) do
-    @wip_lane = { 'Title' => 'WIP', 'Cards' => [{'Id' => 1}, {'Id' => 2}] }
-    @done_lane = { 'Title' => 'Done', 'Cards' => [{'Id' => 3}, {'Id' => 4}] }
-    @ready_to_release_lane = { 'Title' => 'Ready to Release', 'Cards' => [{'Id' => 5}, {'Id' => 6}] }
-    @lkk_response = { 'Lanes' => [@wip_lane, @done_lane, @ready_to_release_lane] }
+    Kanban::Api.clear_cache
 
-    expect(LeanKitKanban::Board).to receive(:find).with(46341228).and_return([@lkk_response])
+    allow(Kanban::Config).to receive(:board_ids).and_return([1])
+    allow(Kanban::Config).to receive(:backlog_lanes).and_return(['Backlog 1', 'Backlog 2'])
+    allow(Kanban::Config).to receive(:active_lanes).and_return(['Active 1', 'Active 2'])
+    allow(Kanban::Config).to receive(:completed_lanes).and_return(['Completed 1', 'Completed 2'])
+    allow(LeanKitKanban::Board).to receive(:all).and_return(
+      [
+        [{'Id'=>1, 'Title'=>'One'}]
+      ])
   end
 
-  context '#all' do
-    it 'returns all cards in all lanes' do
-      cards = Kanban::Api.all(force_refresh: true)
-      expect(cards.map {|card| card.id}).to include(get_card_id(@wip_lane, 0), get_card_id(@wip_lane, 1), get_card_id(@ready_to_release_lane, 0), get_card_id(@ready_to_release_lane, 1), get_card_id(@done_lane, 0), get_card_id(@done_lane, 1))
+  context '#get_boards' do
+    it 'filters boards' do
+      expect(LeanKitKanban::Board).to receive(:all).and_return(
+        [
+          [{'Id'=>1, 'Title'=>'One'}],
+          [{'Id'=>2, 'Title'=>'Two'}]
+        ])
+
+      boards = Kanban::Api.get_boards({force_refresh: true})
+      expect(boards.map {|board| "#{board.id}:#{board.title}"}).to eq([
+        '1:One'
+        ])
+
+    end
+    it 'returns Kanban::Board objects' do
+      expect(LeanKitKanban::Board).to receive(:all).and_return(
+        [
+          [{'Id'=>1, 'Title'=>'One'}],
+          [{'Id'=>2, 'Title'=>'Two'}]
+        ])
+      boards = Kanban::Api.get_boards
+      boards.each {|board| expect(board).to be_a(Kanban::Board) }
+    end
+
+    it 'is cached' do
+      expect(Kanban::Config).to receive(:board_ids).and_return([1]).twice
+      expect(LeanKitKanban::Board).to receive(:all).and_return(
+        [
+          [{'Id'=>1, 'Title'=>'One'}]
+        ]).once
+
+      boards = Kanban::Api.get_boards()
+      boards = Kanban::Api.get_boards()
+
+      expect(boards.map {|board| "#{board.id}:#{board.title}"}).to eq(['1:One'])
+
+    end
+
+    it 'can ignore cache' do
+      expect(Kanban::Config).to receive(:board_ids).and_return([1]).twice
+      expect(LeanKitKanban::Board).to receive(:all).and_return(
+        [
+          [{'Id'=>1, 'Title'=>'One'}]
+        ]).twice
+
+      boards = Kanban::Api.get_boards({force_refresh: true})
+      boards = Kanban::Api.get_boards({force_refresh: true})
+
+      expect(boards.map {|board| "#{board.id}:#{board.title}"}).to eq(['1:One'])
+
     end
   end
-
-  context '#done_cards' do
+  context '#get_cards' do
+    it 'filters lanes' do
+      expect(LeanKitKanban::Board).to receive(:find).with(1).and_return(
+        [
+          {'Lanes' => [
+            {'Title' => 'Backlog 1',   'Cards' => [{'Id' => 1}, {'Id' => 2}]},
+            {'Title' => 'Backlog 2',   'Cards' => [{'Id' => 3}, {'Id' => 4}]},
+            {'Title' => 'Active 1',    'Cards' => [{'Id' => 5}, {'Id' => 6}]},
+            {'Title' => 'Active 2',    'Cards' => [{'Id' => 7}, {'Id' => 8}]},
+            {'Title' => 'Completed 1', 'Cards' => [{'Id' => 9}, {'Id' => 10}]},
+            {'Title' => 'Completed 2', 'Cards' => [{'Id' => 11}, {'Id' => 12}]},
+            {'Title' => 'Unknown 1',   'Cards' => [{'Id' => 9999}]}
+          ]}
+        ])
+      cards = Kanban::Api.all_cards
+      expect(cards.map {|card| card.id}).to eq ([1,2,3,4,5,6,7,8,9,10,11,12])
+    end
     it 'returns Kanban::Card objects' do
-      cards = Kanban::Api.done_cards(force_refresh: true)
+      expect(LeanKitKanban::Board).to receive(:find).with(1).and_return(
+        [
+          {'Lanes' => [
+            {'Title' => 'Backlog 1',   'Cards' => [{'Id' => 1}]},
+          ]}
+        ])
+      cards = Kanban::Api.all_cards
       cards.each {|card| expect(card).to be_a(Kanban::Card) }
     end
-
-    it 'provides the cards in Done lane' do
-      cards = Kanban::Api.done_cards(force_refresh: true)
-      expect(cards.map {|card| card.id}).to include(get_card_id(@done_lane, 0), get_card_id(@done_lane, 1))
-    end
-
-    it 'provides the cards in Ready To Release lane' do
-      cards = Kanban::Api.done_cards(force_refresh: true)
-      expect(cards.map {|card| card.id}).to include(get_card_id(@ready_to_release_lane, 0), get_card_id(@ready_to_release_lane, 1))
-    end
-
-    it 'ignores non-done cards' do
-      @lkk_response['Lanes'].delete(@done_lane)
-      @lkk_response['Lanes'].delete(@ready_to_release_lane)
-      expect(Kanban::Card).not_to receive(:new).with(any_args)
-      expect(Kanban::Api.done_cards(force_refresh: true)).to eq([])
+  end
+  context '#done_cards' do
+    it 'returns completed cards' do
+      expect(LeanKitKanban::Board).to receive(:find).with(1).and_return(
+        [
+          {'Lanes' => [
+            {'Title' => 'Backlog 1',   'Cards' => [{'Id' => 1}, {'Id' => 2}]},
+            {'Title' => 'Backlog 2',   'Cards' => [{'Id' => 3}, {'Id' => 4}]},
+            {'Title' => 'Active 1',    'Cards' => [{'Id' => 5}, {'Id' => 6}]},
+            {'Title' => 'Active 2',    'Cards' => [{'Id' => 7}, {'Id' => 8}]},
+            {'Title' => 'Completed 1', 'Cards' => [{'Id' => 9}, {'Id' => 10}]},
+            {'Title' => 'Completed 2', 'Cards' => [{'Id' => 11}, {'Id' => 12}]},
+            {'Title' => 'Unknown 1',   'Cards' => [{'Id' => 9999}]}
+          ]}
+        ])
+      cards = Kanban::Api.done_cards
+      expect(cards.map {|card| card.id}).to eq ([9,10,11,12])
     end
   end
-
   context '#cards_missing_size' do
-    before(:each) do
-      @wip_lane['Cards'][0].delete('Size')
-      @wip_lane['Cards'][1]['Size'] = 54
-      @ready_to_release_lane['Cards'][0].delete('Size')
-      @ready_to_release_lane['Cards'][1]['Size'] = 99
-      @done_lane['Cards'][0].delete('Size')
-      @done_lane['Cards'][1]['Size'] = 12
+
+    it 'returns card with no size' do
+      expect(LeanKitKanban::Board).to receive(:find).with(1).and_return(
+        [
+          {'Lanes' => [
+            {'Title' => 'Backlog 1',   'Cards' => [{'Id' => 1}]}
+          ]}
+        ])
+      cards = Kanban::Api.cards_missing_size
+      expect(cards.map {|card| card.id}).to eq ([1])
     end
 
-    it 'provides cards without sizes' do
-      cards = Kanban::Api.cards_missing_size(force_refresh: true)
-      expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@ready_to_release_lane, 0), get_card_id(@done_lane, 0))
+    it 'returns card with size of zero' do
+      expect(LeanKitKanban::Board).to receive(:find).with(1).and_return(
+        [
+          {'Lanes' => [
+            {'Title' => 'Backlog 1',   'Cards' => [{'Id' => 1, 'Size' => 0}]}
+          ]}
+        ])
+      cards = Kanban::Api.cards_missing_size
+      expect(cards.map {|card| card.id}).to eq ([1])
     end
 
-    it 'treats cards with 0 size as without size' do
-      @wip_lane['Cards'][0]['Size'] = 0
-      @ready_to_release_lane['Cards'][0]['Size'] = 0
-      @done_lane['Cards'][0]['Size'] = 0
-      cards = Kanban::Api.cards_missing_size(force_refresh: true)
-      expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@ready_to_release_lane, 0), get_card_id(@done_lane, 0))
+    it 'does not return card with size' do
+      expect(LeanKitKanban::Board).to receive(:find).with(1).and_return(
+        [
+          {'Lanes' => [
+            {'Title' => 'Backlog 1',   'Cards' => [{'Id' => 1, 'Size' => 1}]}
+          ]}
+        ])
+      cards = Kanban::Api.cards_missing_size
+      expect(cards.map {|card| card.id}).to eq ([])
     end
 
-    it 'ignores cards with sizes' do
-      cards = Kanban::Api.cards_missing_size(force_refresh: true)
-      expect(cards.map {|card| card.id}).not_to contain_exactly(get_card_id(@wip_lane, 1), get_card_id(@ready_to_release_lane, 1), get_card_id(@done_lane, 1))
+    it 'returns cards in all lanes' do
+      expect(LeanKitKanban::Board).to receive(:find).with(1).and_return(
+        [
+          {'Lanes' => [
+            {'Title' => 'Backlog 1',   'Cards' => [{'Id' => 1}]},
+            {'Title' => 'Active 1',    'Cards' => [{'Id' => 2}]},
+            {'Title' => 'Completed 1', 'Cards' => [{'Id' => 3}]},
+          ]}
+        ])
+      cards = Kanban::Api.cards_missing_size
+      expect(cards.map {|card| card.id}).to eq ([1,2,3])
     end
   end
-
   context '#cards_missing_tags' do
-    before(:each) do
-      @wip_lane['Cards'][0].delete('Tags')
-      @wip_lane['Cards'][1]['Tags'] = 'Shepherd: CJ'
-      @ready_to_release_lane['Cards'][0].delete('Tags')
-      @ready_to_release_lane['Cards'][1]['Tags'] = 'Shepherd: MI'
-      @done_lane['Cards'][0].delete('Tags')
-      @done_lane['Cards'][1]['Tags'] = 'Shepherd: BC'
+    it 'returns cards without tags' do
+      expect(LeanKitKanban::Board).to receive(:find).with(1).and_return(
+        [
+          {'Lanes' => [
+            {'Title' => 'Active 1',    'Cards' => [
+              {'Id' => 1},
+              {'Id' => 2, 'Tags' => ''},
+              {'Id' => 3, 'Tags' => 'a'}]},
+          ]}
+        ])
+      cards = Kanban::Api.cards_missing_tags
+      expect(cards.map {|card| card.id}).to eq ([1,2])
     end
-
-    it 'provides cards without tags' do
-      cards = Kanban::Api.cards_missing_tags(force_refresh: true)
-      expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@ready_to_release_lane, 0), get_card_id(@done_lane, 0))
+    it 'ignores cards in backlog' do
+      expect(LeanKitKanban::Board).to receive(:find).with(1).and_return(
+        [
+          {'Lanes' => [
+            {'Title' => 'Backlog 1',   'Cards' => [{'Id' => 99}]},
+            {'Title' => 'Active 1',    'Cards' => [{'Id' => 2}]},
+            {'Title' => 'Completed 1', 'Cards' => [{'Id' => 3}]},
+          ]}
+        ])
+      cards = Kanban::Api.cards_missing_tags
+      expect(cards.map {|card| card.id}).to eq ([2,3])
     end
-
-    it 'treats cards with blank tags as without tags' do
-      @wip_lane['Cards'][0]['Tags'] = ''
-      @ready_to_release_lane['Cards'][0]['Tags'] = ''
-      @done_lane['Cards'][0]['Tags'] = ''
-      cards = Kanban::Api.cards_missing_tags(force_refresh: true)
-      expect(cards.map {|card| card.id}).to contain_exactly(get_card_id(@wip_lane, 0), get_card_id(@ready_to_release_lane, 0), get_card_id(@done_lane, 0))
-    end
-
-    it 'ignores cards with tags' do
-      cards = Kanban::Api.cards_missing_tags(force_refresh: true)
-      expect(cards.map {|card| card.id}).not_to contain_exactly(get_card_id(@wip_lane, 1), get_card_id(@ready_to_release_lane, 1), get_card_id(@done_lane, 1))
-    end
-  end
-
-  def get_card_id(lane, card_index)
-    lane['Cards'][card_index]['Id']
   end
 end
