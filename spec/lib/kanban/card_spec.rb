@@ -26,27 +26,27 @@ describe Kanban::Card do
         expect(card.week_of).to eq(DateTime.new(2015, 1, 29))
       end
       it 'was wednesday' do
-        card.LastMove = DateTime.new(2015, 1, 28).to_s
+        card.LastMove = DateTime.new(2015, 2, 4).to_s
         expect(card.week_of).to eq(DateTime.new(2015, 1, 29))
       end
       it 'was tuesday' do
-        card.LastMove = DateTime.new(2015, 1, 27).to_s
+        card.LastMove = DateTime.new(2015, 2, 3).to_s
         expect(card.week_of).to eq(DateTime.new(2015, 1, 29))
       end
       it 'was monday' do
-        card.LastMove = DateTime.new(2015, 1, 26).to_s
+        card.LastMove = DateTime.new(2015, 2, 2).to_s
         expect(card.week_of).to eq(DateTime.new(2015, 1, 29))
       end
       it 'was sunday' do
-        card.LastMove = DateTime.new(2015, 1, 25).to_s
+        card.LastMove = DateTime.new(2015, 2, 1).to_s
         expect(card.week_of).to eq(DateTime.new(2015, 1, 29))
       end
       it 'was saturday' do
-        card.LastMove = DateTime.new(2015, 1, 24).to_s
+        card.LastMove = DateTime.new(2015, 1, 31).to_s
         expect(card.week_of).to eq(DateTime.new(2015, 1, 29))
       end
       it 'was friday' do
-        card.LastMove = DateTime.new(2015, 1, 23).to_s
+        card.LastMove = DateTime.new(2015, 1, 30).to_s
         expect(card.week_of).to eq(DateTime.new(2015, 1, 29))
       end
     end

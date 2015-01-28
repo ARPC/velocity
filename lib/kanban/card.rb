@@ -50,8 +50,7 @@ module Kanban
     def week_of
       text = value_of('LastMove', DateTime.now.to_s)
       date = DateTime.parse(text)
-      offset = date.wday == 4 ? 0 : 7
-      date.beginning_of_week(:thursday) + offset
+      date.beginning_of_week(:thursday)
     end
 
     def value_of(name, default)
