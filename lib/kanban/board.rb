@@ -48,14 +48,11 @@ module Kanban
         lane_title = lane['Title']
         lane_type = self.class.get_lane_type lane_title
         if ! lane_type.blank?
-          cards = []
           lane['Cards'].each do |card|
-            yield_val = yield(lane, card) if block_given?
             card['Board'] = @title
             card['Lane'] = lane_title
-            cards << { :card => card, :lane => lane } #if yield_val
+            all_cards << Card.new(card)
           end
-          all_cards += cards.map {|card| Card.new(card[:card])}
         end
       end
       all_cards.flatten
