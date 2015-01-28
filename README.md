@@ -8,14 +8,15 @@ Getting Setup
 
 * Install XCode
 * Install XCode Command tools
-* * `xcode-select --install`
+  * `xcode-select --install`
 * Install [PostGres app](http://postgresapp.com/)
 * Install PG Bundle
   * `bundle config build.pg -- --with-pg-config=/Applications/Postgres.app/Contents/Versions/9.3/bin/pg_config
  ARCHFLAGS="-arch x86_64" gem install pg1`
 * Create a role/user
+  * Use name/password from config/database.yml
 ```sql
-create role dev with createdb login password '******';
+create role your-database-user-name with createdb login password 'your-database-password';
 ```
 * Clone (or fork) the repository.
 * Setup the ruby environment
@@ -24,7 +25,6 @@ create role dev with createdb login password '******';
 * Configure the project
   * copy the `config/secrets_sample.yml` file to `config/secrets.yml`
   * generate a secret key using `rake secret`
-* Setup board id in lib/kanban/api.rb
 * create a file config/lean_kit_kanban.rb with your user credentials
 
 ```ruby
