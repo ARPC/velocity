@@ -7,7 +7,7 @@ RSpec.describe Kanban::Report do
   let (:card2) { Kanban::Card.new(:external_card_id => 2, :lane => 'Code Review', :title => 'Title 2', :tags => 'CJ', :size => 4, :priority_text => 'Normal', :type_name => 'Unassigned', :block_reason => 'bad card', board: 'Board 2') }
 
   it 'creates card and lane extract' do
-    expect(Kanban::Api).to receive(:all).and_return([card1, card2])
+    expect(Kanban::Api).to receive(:all_cards).and_return([card1, card2])
     csv = Kanban::Report.card_and_lane.split("\n")
     expect(csv[0]).to eq('Board,FogBugz ID,Lane')
     expect(csv[1]).to eq('Board 1,1,Doing')
