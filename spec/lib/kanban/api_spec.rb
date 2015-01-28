@@ -42,7 +42,7 @@ describe Kanban::Api do
     end
 
     it 'is cached' do
-      expect(Kanban::Config).to receive(:board_ids).and_return([1]).twice
+      expect(Kanban::Config).to receive(:board_ids).and_return([1]).once
       expect(LeanKitKanban::Board).to receive(:all).and_return(
         [
           [{'Id'=>1, 'Title'=>'One'}]

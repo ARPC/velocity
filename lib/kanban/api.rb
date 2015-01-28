@@ -6,8 +6,8 @@ require 'active_support/core_ext/numeric/time'
 
 module Kanban
   class Api
-    @@cache_refreshed_at = DateTime.new(1970, 1, 1)
-    @@cache = []
+    @cache_refreshed_at = DateTime.new(1970, 1, 1)
+    @cache = []
 
     def self.done_cards(options = {})
       self.all_cards(options).find_all {|card| card.is_completed }
@@ -31,8 +31,8 @@ module Kanban
     end
 
     def self.clear_cache
-      @@cache_refreshed_at = DateTime.new(1970, 1, 1)
-      @@cache = []
+      @cache_refreshed_at = DateTime.new(1970, 1, 1)
+      @cache = []
     end
 
     def self.ignore_cache(options)
@@ -42,27 +42,28 @@ module Kanban
         return true
       end
 
-      !@@cache_refreshed_at.between?(10.minutes.ago, 0.minutes.ago)
+      !@cache_refreshed_at.between?(10.minutes.ago, 0.minutes.ago)
     end
 
     def self.get_boards(options = {})
       if self.ignore_cache options
-        @@cache = LeanKitKanban::Board.all
-        @@cache_refreshed_at = Time.now
-      end
+        data = LeanKitKanban::Board.all
+        valid_boards = Kanban::Config.board_ids
 
-      valid_boards = Kanban::Config.board_ids
-
-      all_boards = []
-      @@cache.each do |boards|
-        boards.each do |board|
-          id = board['Id']
-          if valid_boards.include? id
-            all_boards << Kanban::Board.new(id: id, title: board['Title'])
+        all_boards = []
+        data.each do |boards|
+          boards.each do |board|
+            id = board['Id']
+            if valid_boards.include? id
+              all_boards << Kanban::Board.new(id: id, title: board['Title'])
+            end
           end
         end
+        @cache = all_boards.flatten
+        @cache_refreshed_at = Time.now
       end
-      all_boards.flatten
+
+      @cache
     end
 
     def self.get_board(board_id)
