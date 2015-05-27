@@ -4,26 +4,15 @@ require 'csv_utility'
 
 class CardAnalyticsController < ApplicationController
   def velocity
-    @all_velocities = Analytics.velocity.to_a
-    @chart_data = @all_velocities[-12..-1].to_h
-    @avg_velocity = avg(@all_velocities)
-    @last_4_avg_velocity = avg(@all_velocities[-5..-2])
-    if @chart_data.nil? || @chart_data.empty?
-      @velocity = 0
-    else
-      @velocity = @chart_data.to_a.last[1]
-    end
+
+    data = Analytics.get_velocity_information
+    @chart_data = data[:chart_data]
+    @avg_velocity = data[:avg_velocity]
+    @velocity = data[:current_velocity]
+    @last_4_avg_velocity = data[:last_4_avg_velocity]
     respond_to do |format|
       format.html
       format.json { render json: @chart_data }
-    end
-  end
-
-  def avg(velocities)
-    if velocities.nil? || velocities.empty?
-      0
-    else
-      velocities.inject(0.0) {|result, el| result + el[1]}/velocities.size.to_f
     end
   end
 
