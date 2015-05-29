@@ -1,20 +1,21 @@
-%h1 Velocity
-.well.form-horizontal
-  .control-group
-    %label.control-label Current Velocity
-    .controls
-      %span= @velocity
-  .control-group
-    %label.control-label Avg. Velocity
-    .controls
-      %span= number_with_precision(@avg_velocity, precision: 2)
-  .control-group
-    %label.control-label Last 4 Avg. Velocity
-    .controls
-      %span= number_with_precision(@last_4_avg_velocity, precision: 2)
-%h4 Previous weeks
-= javascript_include_tag "//www.google.com/jsapi", "chartkick"
-= column_chart @chart_data
+%center
+  %h1 Velocity
+  .well.form-horizontal
+    .control-group
+      %label.control-label Current Velocity
+      .controls
+        %span= @velocity
+    .control-group
+      %label.control-label Avg. Velocity
+      .controls
+        %span= number_with_precision(@avg_velocity, precision: 2)
+    .control-group
+      %label.control-label Last 4 Avg. Velocity
+      .controls
+        %span= number_with_precision(@last_4_avg_velocity, precision: 2)
+  %h3 Previous weeks
+  = javascript_include_tag "//www.google.com/jsapi", "chartkick"
+  = column_chart @chart_data
 .well
   .form-actions
     = link_to 'Looking for reports?', card_analytics_report_url
