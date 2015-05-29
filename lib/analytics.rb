@@ -13,12 +13,17 @@ class Analytics
 
   def self.get_velocity_information
     all_velocities = Analytics.velocity().to_a
+
     all_velocities.length < 12 ? first = all_velocities.length : first = 12
     chart_data = all_velocities[-first..-2].to_h
-    avg_velocity = avg(all_velocities)
+
+    avg_velocity = avg(all_velocities[-all_velocities.length..-2])
+
     all_velocities.length < 5 ? first = all_velocities.length : first = 5
     last_4_avg_velocity = avg(all_velocities[-first..-2])
+
     current_velocity = 0
+
     unless all_velocities.nil? || all_velocities.empty?
       current_velocity = all_velocities.last[1]
     end
