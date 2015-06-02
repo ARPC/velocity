@@ -63,6 +63,22 @@ RSpec.describe Analytics do
       expect(latest_week_value).to eq(5)
     end
 
+    describe 'start of sprint is Thursday 1:00PM' do
+      it 'the current velocity should not include the value from last thursday before 1:00PM' do
+        last_thursday_before_one = (Time.now.beginning_of_week + 13*60*60-1).to_datetime
+        TaskMetric.create!(:leankit_id => 8, :estimate => 1, :done_at => last_thursday_before_one)
+        current_velocity = Analytics.current_velocity
+        expect(current_velocity).to eq(7)
+      end
+
+      it 'the current velocity should include the value from last thursday after 1:00PM' do
+        last_thursday_after_one = (Time.now.beginning_of_week + 13*60*60+1).to_datetime
+        TaskMetric.create!(:leankit_id => 9, :estimate => 2, :done_at => last_thursday_after_one)
+        current_velocity = Analytics.current_velocity
+        puts last_thursday_after_one
+        expect(current_velocity).to eq(9)
+      end
+    end
 
     def latest_week_value(chartdata)
       chartdata.to_a[-1][1]
