@@ -31,12 +31,29 @@ class Analytics
     { :chart_data => chart_data, :avg_velocity => avg_velocity, :last_4_avg_velocity => last_4_avg_velocity, :current_velocity => current_velocity }
   end
 
+  def self.current_velocity
+    self.get_velocity_information[:current_velocity]
+  end
+
+  def self.chart_data
+    self.get_velocity_information[:chart_data]
+  end
+
+  def self.avg_velocity
+    self.get_velocity_information[:avg_velocity]
+  end
+
+  def self.last_4_avg_velocity
+    self.get_velocity_information[:last_4_avg_velocity]
+  end
+
+
+
   def self.avg(velocities)
     if velocities.nil? || velocities.empty?
       0
     else
-      avg = velocities.inject(0.0) {|result, el| result + el[1]}/velocities.size.to_f
-      avg
+      velocities.inject(0.0) {|result, el| result + el[1]}/velocities.size.to_f
     end
   end
 
