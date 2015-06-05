@@ -22,15 +22,16 @@ RSpec.describe Analytics do
                                                                                     # total including current week = 199
   it 'calculates velocity by week' do
     velocities = Analytics.velocity
-    expect(velocities[1.weeks.ago.beginning_of_week.strftime('%m/%d/%Y')]).to eq(5)
-    expect(velocities[2.weeks.ago.beginning_of_week.strftime('%m/%d/%Y')]).to eq(74)
-    expect(velocities[3.weeks.ago.beginning_of_week.strftime('%m/%d/%Y')]).to eq(93)
+    expect(velocities[new_beginning_of_week(1.weeks.ago).strftime('%m/%d/%Y')]).to eq(5)
+    expect(velocities[new_beginning_of_week(2.weeks.ago).strftime('%m/%d/%Y')]).to eq(74)
+    expect(velocities[new_beginning_of_week(3.weeks.ago).strftime('%m/%d/%Y')]).to eq(93)
+
   end
 
   it 'limits to only those from a specific date' do
     velocities = Analytics.velocity(:from => 2.weeks.ago.beginning_of_week)
-    expect(velocities[1.weeks.ago.beginning_of_week.strftime('%m/%d/%Y')]).to eq(5)
-    expect(velocities[2.weeks.ago.beginning_of_week.strftime('%m/%d/%Y')]).to eq(74)
+    expect(velocities[new_beginning_of_week(1.weeks.ago).strftime('%m/%d/%Y')]).to eq(5)
+    expect(velocities[new_beginning_of_week(2.weeks.ago).strftime('%m/%d/%Y')]).to eq(74)
   end
 
   describe '#get_velocity_information' do
@@ -65,23 +66,46 @@ RSpec.describe Analytics do
 
     describe 'start of sprint is Thursday 1:00PM' do
       it 'the current velocity should not include the value from last thursday before 1:00PM' do
-        last_thursday_before_one = (Time.now.beginning_of_week + 13*60*60-1).to_datetime
+        last_thursday_before_one = (new_beginning_of_week(Time.now) - 1).to_datetime
         TaskMetric.create!(:leankit_id => 8, :estimate => 1, :done_at => last_thursday_before_one)
         current_velocity = Analytics.current_velocity
         expect(current_velocity).to eq(7)
       end
 
       it 'the current velocity should include the value from last thursday after 1:00PM' do
-        last_thursday_after_one = (Time.now.beginning_of_week + 13*60*60+1).to_datetime
+        last_thursday_after_one = (new_beginning_of_week(Time.now) + 1).to_datetime
         TaskMetric.create!(:leankit_id => 9, :estimate => 2, :done_at => last_thursday_after_one)
         current_velocity = Analytics.current_velocity
-        puts last_thursday_after_one
         expect(current_velocity).to eq(9)
       end
     end
 
+    # describe 'Remaining Time' do
+    #   it 'gets the correct time in seconds until the sprint ends' do
+    #     time_remaining = Analytics.time_remaining
+    #     end_of_sprint = Time.now.beginning_of_week + 7*24*60*60 + 13*60*60
+    #     now = Time.now
+    #     expect(time_remaining).to eq((end_of_sprint - now).round(0))
+    #   end
+    #
+    #   it 'gets the correct time in words until the sprint ends' do
+    #     time_remaining
+    #     time_remaining_in_words = Analytics.time_remaining_in_words
+    #     puts time_remaining_in_words
+    #     expect (time_remaining_in_words).to
+    #   end
+    #
+    # end
+
     def latest_week_value(chartdata)
       chartdata.to_a[-1][1]
+    end
+  end
+  def new_beginning_of_week(time)
+    if [:thursday?].any? { |day| Date.today.send(day) } && Time.now.hour<13
+      return time.beginning_of_week - 7*24*60*60 + 13*60*60
+    else
+      return time.beginning_of_week + 13*60*60 #Thursday at 1:00PM
     end
   end
 end
