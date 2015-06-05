@@ -64,6 +64,11 @@ RSpec.describe Analytics do
       expect(latest_week_value).to eq(5)
     end
 
+    it 'should get last week\'s velocity' do
+      last_week_velocity = Analytics.last_week_velocity
+      expect(last_week_velocity).to eq(5)
+    end
+
     describe 'start of sprint is Thursday 1:00PM' do
       it 'the current velocity should not include the value from last thursday before 1:00PM' do
         last_thursday_before_one = (new_beginning_of_week(Time.now) - 1).to_datetime
@@ -80,22 +85,13 @@ RSpec.describe Analytics do
       end
     end
 
-    # describe 'Remaining Time' do
-    #   it 'gets the correct time in seconds until the sprint ends' do
-    #     time_remaining = Analytics.time_remaining
-    #     end_of_sprint = Time.now.beginning_of_week + 7*24*60*60 + 13*60*60
-    #     now = Time.now
-    #     expect(time_remaining).to eq((end_of_sprint - now).round(0))
-    #   end
-    #
-    #   it 'gets the correct time in words until the sprint ends' do
-    #     time_remaining
-    #     time_remaining_in_words = Analytics.time_remaining_in_words
-    #     puts time_remaining_in_words
-    #     expect (time_remaining_in_words).to
-    #   end
-    #
-    # end
+    describe 'count cards' do
+      it 'gives the number of tasks from this week' do
+        number_of_cards = Analytics.number_of_cards
+        puts Kanban::Api.all_cards.each
+        expect(number_of_cards).to eq(3)
+      end
+    end
 
     def latest_week_value(chartdata)
       chartdata.to_a[-1][1]
