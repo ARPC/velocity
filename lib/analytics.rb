@@ -14,7 +14,7 @@ class Analytics
   def self.get_velocity_information
     all_velocities = Analytics.velocity().to_a
 
-    chart_data_max = 100
+    chart_data_max = 6
     all_velocities.length < chart_data_max ? first = all_velocities.length : first = chart_data_max
     chart_data = all_velocities[-first..-2]
 
@@ -23,14 +23,28 @@ class Analytics
     all_velocities.length < 5 ? first = all_velocities.length : first = 5
     last_4_avg_velocity = avg(all_velocities[-first..-2])
 
-    current_velocity = 0
+    current_velocity = all_velocities[-1][1]
+
+    last_week_velocity = all_velocities[-2][1]
 
     unless all_velocities.nil? || all_velocities.empty?
       current_velocity = all_velocities.last[1]
     end
 
     { :chart_data => chart_data, :avg_velocity => avg_velocity, :last_4_avg_velocity => last_4_avg_velocity,
-      :current_velocity => current_velocity}
+      :current_velocity => current_velocity, :last_week_velocity => last_week_velocity }
+  end
+
+  def new_beginning_of_week(time)
+    if [:thursday?].any? { |day| Date.today.send(day) } && Time.now.hour<13
+      return time.beginning_of_week - 7*24*60*60 + 13*60*60
+    else
+      return time.beginning_of_week + 13*60*60 #Thursday at 1:00PM
+    end
+  end
+
+  def self.number_of_cards
+    Kanban::Api.all_cards.where(:created_at>new_beginning_of_week(Time.now)).count
   end
 
   def self.current_velocity
@@ -49,6 +63,10 @@ class Analytics
     self.get_velocity_information[:last_4_avg_velocity]
   end
 
+  def self.last_week_velocity
+    self.get_velocity_information[:last_week_velocity]
+  end
+
   def self.avg(velocities)
     if velocities.nil? || velocities.empty?
       0
@@ -56,24 +74,4 @@ class Analytics
       velocities.inject(0.0) {|result, el| result + el[1]}/velocities.size.to_f
     end
   end
-  #
-  #
-  # def self.time_remaining
-  #   end_of_sprint = Time.now.beginning_of_week + 7*24*60*60 + 13*60*60
-  #   now = Time.now
-  #   time_remaining = (end_of_sprint - now).round(0)
-  # end
-  #
-  # def self.time_remaining_formatted(time_remaining)
-  #   seconds = time_remaining % 60
-  #   minutes = (time_remaining / 60) % 60
-  #   hours = time_remaining / (60 * 60)
-  #   hours.to_s + ":" + format("%02d",minutes.to_s) + ":" + format("%02d",seconds.to_s)
-  # end
-  #
-  # def self.give_time_remaining_in_words
-  #   time_remaining = self.time_remaining
-  #   @time_remaining_formatted = self.time_remaining_formatted(time_remaining)
-  # end
-
 end

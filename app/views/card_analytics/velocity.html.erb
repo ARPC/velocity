@@ -1,3 +1,7 @@
+
+
+
+
 <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
 <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
 <center>
@@ -5,18 +9,29 @@
     <b>Velocity</b>
   </h1>
 </center>
-  <div class="well form-horizontal">
-    <h2>
-      Current Velocity: <big><%= @velocity %></big>
-    </h2>
-  </div>
+
+<div class="big-well">
+  <h3 class = 'word right_aligned'>
+    Current Velocity:
+  </h3>
+  <h2 class = 'number'>
+    <%= @velocity %>
+  </h2>
+  <br><br><br><br>
+  <h3 class = 'word'>
+    Last Week's Velocity:
+  </h3>
+    <h2 class= 'number'>
+    <%= @last_week_velocity%>
+  </h2>
+</div>
 <center>
   <h2>
     <u>Previous weeks</u>
   </h2>
 </center>
 <div class="velocities">
-  <h3 class='word right_aligned' style= 'padding-left'=30px>
+  <h3 class='word right_aligned'>
     Average Velocity:
   </h3>
   <h2 class = 'number'>
@@ -30,9 +45,12 @@
     <%= number_with_precision(@last_4_avg_velocity, precision: 2) %>
   </h2>
 </div>
-<div id='chart_div'>
+<div id='chart'>
   <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
-  <%= column_chart @chart_data, @chart_options %>
+  <%= column_chart @chart_data, {
+    id:'chart',
+    library: { width: 800, height: 450}
+  } %>
 </div>
 <div class="clear well">
   <%= link_to 'Looking for reports?', card_analytics_report_url %>
