@@ -14,8 +14,9 @@ class Analytics
   def self.get_velocity_information
     all_velocities = Analytics.velocity().to_a
 
-    all_velocities.length < 12 ? first = all_velocities.length : first = 12
-    chart_data = all_velocities[-first..-2].to_h
+    chart_data_max = 100
+    all_velocities.length < chart_data_max ? first = all_velocities.length : first = chart_data_max
+    chart_data = all_velocities[-first..-2]
 
     avg_velocity = avg(all_velocities[-all_velocities.length..-2])
 
@@ -28,7 +29,8 @@ class Analytics
       current_velocity = all_velocities.last[1]
     end
 
-    { :chart_data => chart_data, :avg_velocity => avg_velocity, :last_4_avg_velocity => last_4_avg_velocity, :current_velocity => current_velocity }
+    { :chart_data => chart_data, :avg_velocity => avg_velocity, :last_4_avg_velocity => last_4_avg_velocity,
+      :current_velocity => current_velocity}
   end
 
   def self.current_velocity
@@ -47,8 +49,6 @@ class Analytics
     self.get_velocity_information[:last_4_avg_velocity]
   end
 
-
-
   def self.avg(velocities)
     if velocities.nil? || velocities.empty?
       0
@@ -56,5 +56,24 @@ class Analytics
       velocities.inject(0.0) {|result, el| result + el[1]}/velocities.size.to_f
     end
   end
+  #
+  #
+  # def self.time_remaining
+  #   end_of_sprint = Time.now.beginning_of_week + 7*24*60*60 + 13*60*60
+  #   now = Time.now
+  #   time_remaining = (end_of_sprint - now).round(0)
+  # end
+  #
+  # def self.time_remaining_formatted(time_remaining)
+  #   seconds = time_remaining % 60
+  #   minutes = (time_remaining / 60) % 60
+  #   hours = time_remaining / (60 * 60)
+  #   hours.to_s + ":" + format("%02d",minutes.to_s) + ":" + format("%02d",seconds.to_s)
+  # end
+  #
+  # def self.give_time_remaining_in_words
+  #   time_remaining = self.time_remaining
+  #   @time_remaining_formatted = self.time_remaining_formatted(time_remaining)
+  # end
 
 end

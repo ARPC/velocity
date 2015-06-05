@@ -1,2 +1,53 @@
 @import "bootstrap-sprockets";
 @import "bootstrap";
+
+.velocities {
+  float: left;
+  padding-right: 100px;
+  padding-left: 20px;
+  padding-top: 100px;
+}
+
+.axis {
+  margin-top: 75px;
+  float: left;
+  font-weight: bold;
+  padding-right: 10px;
+  z-index: 2;
+}
+
+.axis2 {
+  text-align: right;
+  margin-top: 49px;
+}
+
+
+.right_aligned {
+  padding-left: 74px;
+}
+
+.clear {
+  clear: both;
+}
+
+.word {
+  color: #696969;
+  float:left;
+}
+
+.number {
+  padding-left : 20px;
+  float:left;
+}
+
+#chart_div {
+  height: 600px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  direction: rtl;
+}
+
+#velocity_chart_content {
+  margin: 0 0;
+  padding: 0 0;
+}

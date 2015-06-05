@@ -7,6 +7,11 @@ class CardAnalyticsController < ApplicationController
 
     data = Analytics.get_velocity_information
     @chart_data = data[:chart_data]
+    @chart_options = {
+      id:'velocity_chart_container',
+      max: 200,
+      library: { width: 6000, height: 600 }
+    }
     @avg_velocity = data[:avg_velocity]
     @velocity = data[:current_velocity]
     @last_4_avg_velocity = data[:last_4_avg_velocity]

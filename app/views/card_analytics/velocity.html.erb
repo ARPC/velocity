@@ -1,0 +1,39 @@
+<%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+<center>
+  <h1>
+    <b>Velocity</b>
+  </h1>
+</center>
+  <div class="well form-horizontal">
+    <h2>
+      Current Velocity: <big><%= @velocity %></big>
+    </h2>
+  </div>
+<center>
+  <h2>
+    <u>Previous weeks</u>
+  </h2>
+</center>
+<div class="velocities">
+  <h3 class='word right_aligned' style= 'padding-left'=30px>
+    Average Velocity:
+  </h3>
+  <h2 class = 'number'>
+    <%= number_with_precision(@avg_velocity, precision: 2) %>
+  </h2>
+  <br>
+  <h3 class='word'>
+    Last 4 Average Velocity:
+  </h3>
+  <h2 class='number'>
+    <%= number_with_precision(@last_4_avg_velocity, precision: 2) %>
+  </h2>
+</div>
+<div id='chart_div'>
+  <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+  <%= column_chart @chart_data, @chart_options %>
+</div>
+<div class="clear well">
+  <%= link_to 'Looking for reports?', card_analytics_report_url %>
+</div>
