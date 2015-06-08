@@ -11,19 +11,25 @@
 </center>
 
 <div class="big-well">
-  <h3 class = 'word right_aligned'>
+  <h3 class = 'word' id = 'current_velocity_right_aligned'>
     Current Velocity:
   </h3>
-  <h2 class = 'number'>
+  <h1 class = 'number'>
     <%= @velocity %>
-  </h2>
+  </h1>
+  <h3 class = 'word2'>
+    (from <%=@cards_this_week%> tasks completed)
+  </h3>
   <br><br><br><br>
   <h3 class = 'word'>
     Last Week's Velocity:
   </h3>
-    <h2 class= 'number'>
-    <%= @last_week_velocity%>
-  </h2>
+  <h1 class= 'number'>
+    <%=@last_week_velocity%>
+  </h1>
+  <h3 class = 'word2'>
+    (from <%=@cards_last_week%> tasks completed)
+  </h3>
 </div>
 <center>
   <h2>
@@ -31,19 +37,19 @@
   </h2>
 </center>
 <div class="velocities">
-  <h3 class='word right_aligned'>
+  <h3 class='word' id='average_velocity_right_aligned'>
     Average Velocity:
   </h3>
-  <h2 class = 'number'>
+  <h1 class = 'number'>
     <%= number_with_precision(@avg_velocity, precision: 2) %>
-  </h2>
+  </h1>
   <br>
   <h3 class='word'>
     Last 4 Average Velocity:
   </h3>
-  <h2 class='number'>
+  <h1 class='number'>
     <%= number_with_precision(@last_4_avg_velocity, precision: 2) %>
-  </h2>
+  </h1>
 </div>
 <div id='chart'>
   <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>

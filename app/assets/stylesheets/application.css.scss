@@ -7,8 +7,12 @@
   padding-top: 100px;
 }
 
-.right_aligned {
+#average_velocity_right_aligned {
   padding-left: 74px;
+}
+
+#current_velocity_right_aligned {
+  padding-left: 51px;
 }
 
 .clear {
@@ -19,6 +23,13 @@
 .word {
   color: #696969;
   float:left;
+}
+
+.word2 {
+  padding-left : 20px;
+  float:left;
+  margin-top: 22px;
+  color: #696969;
 }
 
 #last_week_word {
@@ -34,6 +45,7 @@
 .number {
   padding-left : 20px;
   float:left;
+  margin-top: 12px;
 }
 
 #chart {
