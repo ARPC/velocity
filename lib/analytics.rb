@@ -35,16 +35,32 @@ class Analytics
       :current_velocity => current_velocity, :last_week_velocity => last_week_velocity }
   end
 
-  def new_beginning_of_week(time)
-    if [:thursday?].any? { |day| Date.today.send(day) } && Time.now.hour<13
-      return time.beginning_of_week - 7*24*60*60 + 13*60*60
-    else
-      return time.beginning_of_week + 13*60*60 #Thursday at 1:00PM
-    end
+  def self.cards_this_week
+    TaskMetric.where('done_at > ?', self.new_beginning_of_week(Time.now)).count
   end
 
-  def self.number_of_cards
-    Kanban::Api.all_cards.where(:created_at>new_beginning_of_week(Time.now)).count
+  def self.cards_last_week
+    beginning_of_last_week = self.new_beginning_of_week(Time.now)-7*24*60*60
+    end_of_last_week = self.new_beginning_of_week(Time.now)
+    TaskMetric.where(done_at: beginning_of_last_week..end_of_last_week).count
+  end
+
+  def self.cards_in_the_past_week
+    TaskMetric.where('done_at > ?', Time.now - 7*24*60*60).count
+  end
+
+  def self.total_cards
+    TaskMetric.all.count
+  end
+
+
+
+  def self.new_beginning_of_week(time)
+    if [:thursday?].any? { |day| Date.today.send(day) } && Time.now.hour<13
+      time.beginning_of_week - 7*24*60*60 + 13*60*60
+    else
+      time.beginning_of_week + 13*60*60 #Thursday at 1:00PM
+    end
   end
 
   def self.current_velocity

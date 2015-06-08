@@ -1,10 +1,12 @@
 require 'rails_helper'
 require 'analytics'
+require 'kanban'
 
 RSpec.describe Analytics do
 
 
   before(:each) do
+    TaskMetric.delete_all
     TaskMetric.create!(:leankit_id => 0, :estimate => 7, :done_at => 0.weeks.ago) # our current velocity = 7
 
     TaskMetric.create!(:leankit_id => 1, :estimate => 2, :done_at => 1.weeks.ago) # 5
@@ -87,9 +89,24 @@ RSpec.describe Analytics do
 
     describe 'count cards' do
       it 'gives the number of tasks from this week' do
-        number_of_cards = Analytics.number_of_cards
-        puts Kanban::Api.all_cards.each
-        expect(number_of_cards).to eq(3)
+        cards_this_week = Analytics.cards_this_week
+        expect(cards_this_week).to eq(1)
+      end
+
+      it 'gives the number of tasks from last week' do
+        cards_last_week = Analytics.cards_last_week
+        expect(cards_last_week).to eq(2)
+      end
+
+      it 'gives the number of cards completed within the past week' do
+        TaskMetric.create!(:leankit_id => 10, :estimate => 1, :done_at => Time.now - 7*24*60*60 + 1)
+        cards_in_the_past_week = Analytics.cards_in_the_past_week
+        expect(cards_in_the_past_week).to eq(2)
+      end
+
+      it 'gives the total number of cards completed' do
+        total_cards = Analytics.total_cards
+        expect(total_cards).to eq(8)
       end
     end
 
@@ -98,10 +115,6 @@ RSpec.describe Analytics do
     end
   end
   def new_beginning_of_week(time)
-    if [:thursday?].any? { |day| Date.today.send(day) } && Time.now.hour<13
-      return time.beginning_of_week - 7*24*60*60 + 13*60*60
-    else
-      return time.beginning_of_week + 13*60*60 #Thursday at 1:00PM
-    end
+    Analytics.new_beginning_of_week(time)
   end
 end

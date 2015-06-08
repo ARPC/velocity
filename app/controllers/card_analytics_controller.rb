@@ -11,11 +11,16 @@ class CardAnalyticsController < ApplicationController
     @avg_velocity = data[:avg_velocity]
     @velocity = data[:current_velocity]
     @last_4_avg_velocity = data[:last_4_avg_velocity]
+    @cards_this_week = Analytics.cards_this_week
+    @cards_last_week = Analytics.cards_last_week
+    @cards_in_the_past_week = Analytics.cards_in_the_past_week
+    @total_cards = Analytics.total_cards
     respond_to do |format|
       format.html
       format.json { render json: @chart_data }
     end
   end
+
 
   def report
   end
