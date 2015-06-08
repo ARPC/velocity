@@ -75,8 +75,13 @@ GEM
     factory_girl (4.4.0)
       activesupport (>= 3.0.0)
     factory_girl_rails (4.4.1)
+      (5.2.3)
+      actionpack (>= 2.3.0)
       factory_girl (~> 4.4.0)
+      json
+      multi_json
       railties (>= 3.0.0)
+      request_store (>= 1.0.5)
     groupdate (2.3.0)
       activesupport (>= 3)
     haml (4.0.5)
@@ -136,6 +141,7 @@ GEM
     rake (10.3.2)
     rdoc (4.1.1)
       json (~> 1.4)
+    request_store (1.1.0)
     rspec-core (3.0.4)
       rspec-support (~> 3.0.0)
     rspec-expectations (3.0.4)
