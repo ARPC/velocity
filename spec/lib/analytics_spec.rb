@@ -1,6 +1,7 @@
 require 'rails_helper'
 require 'analytics'
 require 'kanban'
+require 'delorean'
 
 RSpec.describe Analytics do
 
@@ -107,6 +108,26 @@ RSpec.describe Analytics do
       it 'gives the total number of cards completed' do
         total_cards = Analytics.total_cards
         expect(total_cards).to eq(8)
+      end
+    end
+
+    describe 'works at all times of week' do
+      it 'works during velocity meeting at Thursday at 1:01PM' do
+        during_meeting = new_beginning_of_week((Time.now)+1).to_datetime
+        Delorean.time_travel_to(during_meeting)
+        TaskMetric.create!(:leankit_id => 0, :estimate => 1, :done_at => Time.now-4*24*60*60)
+        current_velocity = Analytics.current_velocity
+        expect(current_velocity).to eq(7)
+        Delorean.back_to_1985
+      end
+    end
+
+    describe 'helper functions' do
+      it 'the new beginning of week function gives last Thursday at 1:00PM' do
+        Delorean.time_travel_to('2015-06-15')
+        new_beginning_of_week = Analytics.new_beginning_of_week(Time.now)
+        actual_beginning_of_week = '2015-06-11 13:00:00 -0400'
+        expect(new_beginning_of_week).to eq(actual_beginning_of_week)
       end
     end
 

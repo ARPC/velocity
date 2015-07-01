@@ -51,6 +51,7 @@ gem 'capistrano'
 gem 'capistrano-bundler'
 gem 'capistrano-rails'
 gem 'capistrano-rvm', github: "capistrano/rvm"
+gem 'delorean'
 
 group :test, :development do
   gem "rspec-rails"
