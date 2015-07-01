@@ -14,7 +14,7 @@ class Analytics
   def self.get_velocity_information
     all_velocities = Analytics.velocity().to_a
 
-    chart_data_max = 6
+    chart_data_max = 5
     all_velocities.length < chart_data_max ? first = all_velocities.length : first = chart_data_max
     chart_data = all_velocities[-first..-2]
 
